@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Api_FiesteDocs.Entities;
+namespace Api_FiesteDocs.Models;
 
 public partial class Grupo
 {
