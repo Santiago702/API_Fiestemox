@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Api_FiesteDocs.Entities;
+using Api_FiesteDocs.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Data;
