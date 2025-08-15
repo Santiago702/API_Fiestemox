@@ -1,20 +1,64 @@
 using Microsoft.EntityFrameworkCore;
-using Api_FiesteDocs.Models;
+using Microsoft.OpenApi.Models;
 using Api_FiesteDocs.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configuración de Swagger personalizada
+builder.Services.AddSwaggerGen(c =>
+{
+    // Información básica
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API FiesteDocs",
+        Version = "v1",
+        Description = "API para la gestión de estudiantes y su repertorio en la Fundación de Musicos Fiestemox",
+        Contact = new OpenApiContact
+        {
+            Name = "Santiago Cuervo",
+            Email = "santic9999@gmail.com",
+            Url = new Uri("https://www.linkedin.com/in/santiago-cuervo-3622ba290/")
+        }
+    });
+
+    
+
+    // Configuración para usar JWT en Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Introduce el token JWT en el formato: Bearer {token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+// Configuración de DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -22,9 +66,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
