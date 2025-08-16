@@ -8,10 +8,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Api_FiesteDocs.Controllers
 {
-    
     [Route("api/[controller]")]
     [ApiController]
-    
     public class UsuarioController : ControllerBase
     {
         private I_Usuario _usuario;
@@ -22,9 +20,9 @@ namespace Api_FiesteDocs.Controllers
         }
 
         /// <summary>
-        /// Obtiene los datos de todos los usuarios y los envía a través de la API 
+        /// Obtiene los datos de todos los usuarios y los envía a través de la API.
         /// </summary>
-        /// <returns> Lista de Usuarios</returns>
+        /// <returns>Respuesta HTTP con la lista de usuarios en la propiedad "response".</returns>
         [HttpGet]
         [Route("Listar")]
         public IActionResult Listar()
@@ -33,9 +31,10 @@ namespace Api_FiesteDocs.Controllers
             try
             {
                 lista = _usuario.Listar();
-                return StatusCode(StatusCodes.Status200OK, new {mensaje = "Ok", response = lista });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = lista });
 
-            }catch (Exception error)
+            }
+            catch (Exception error)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message, response = lista });
             }
@@ -43,10 +42,10 @@ namespace Api_FiesteDocs.Controllers
         }
 
         /// <summary>
-        /// Obtiene los datos de los estudiantes de un grupo o clase específico
+        /// Obtiene los datos de los estudiantes de un grupo o clase específico.
         /// </summary>
-        /// <param name="id_Grupo">Id del grupo  o clase del que se desea obtener los estudiantes</param>
-        /// <returns>Lista de Usuarios de rol Estudiante en el grupo específicado</returns>
+        /// <param name="id_Grupo">Id del grupo o clase del que se desea obtener los estudiantes.</param>
+        /// <returns>Respuesta HTTP con la lista de usuarios (rol estudiante) del grupo especificado en "response".</returns>
         [HttpGet]
         [Route("Estudiantes/{id_Grupo:int}")]
         public IActionResult Estudiantes(int id_Grupo)
@@ -64,6 +63,11 @@ namespace Api_FiesteDocs.Controllers
             }
         }
 
+        /// <summary>
+        /// Busca y devuelve un usuario a partir de su correo.
+        /// </summary>
+        /// <param name="correo">Correo electrónico del usuario a buscar (se recibe en el body).</param>
+        /// <returns>Respuesta HTTP con el usuario encontrado en "response", o un mensaje indicando que no se encontró.</returns>
         [HttpPost]
         [Route("ObtenerCorreo")]
         public IActionResult ObtenerCorreo([FromBody] string correo)
@@ -85,6 +89,37 @@ namespace Api_FiesteDocs.Controllers
             }
         }
 
+        /// <summary>
+        /// Obtiene un usuario por su identificador único (Id).
+        /// </summary>
+        /// <param name="id_Usuario">Identificador del usuario a buscar (en la ruta).</param>
+        /// <returns>Respuesta HTTP con el usuario encontrado en "response", o un mensaje indicando que no se encontró.</returns>
+        [HttpPost]
+        [Route("ObtenerId/{id_Usuario:int}")]
+        public IActionResult ObtenerId(int id_Usuario)
+        {
+            Usuario usuario = new Usuario();
+            try
+            {
+                usuario = _usuario.ObtenerId(id_Usuario);
+                if (usuario != null)
+                {
+                    return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = usuario });
+                }
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "No se encontró usuario asociado", response = usuario });
+
+            }
+            catch (Exception error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message, response = usuario });
+            }
+        }
+
+        /// <summary>
+        /// Crea un nuevo usuario en la base de datos.
+        /// </summary>
+        /// <param name="usuario">Objeto Usuario con los datos que se desean crear (recibido en el body).</param>
+        /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
         [Route("Crear")]
         public IActionResult Crear([FromBody] Usuario usuario)
@@ -94,11 +129,63 @@ namespace Api_FiesteDocs.Controllers
                 Request peticion = _usuario.Crear(usuario);
                 if (!peticion.Success)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message});
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });
                 }
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = peticion.Message});
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = peticion.Message });
 
-            } catch (Exception error)
+            }
+            catch (Exception error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message });
+            }
+        }
+
+        /// <summary>
+        /// Edita los datos de un usuario existente. Si algún campo viene vacío, se conserva el valor actual en la BD.
+        /// </summary>
+        /// <param name="usuario">Objeto Usuario con los datos actualizados (recibido en el body). Debe contener el Id para identificar el registro a editar.</param>
+        /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
+        [HttpPut]
+        [Route("Editar")]
+        public IActionResult Editar([FromBody] Usuario usuario)
+        {
+            try
+            {
+                Request peticion = _usuario.Editar(usuario);
+                if (!peticion.Success)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });
+                }
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = peticion.Message });
+
+            }
+            catch (Exception error)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message });
+            }
+        }
+
+        /// <summary>
+        /// Elimina un usuario por su identificador.
+        /// </summary>
+        /// <param name="id_Usuario">Identificador del usuario a eliminar (en la ruta).</param>
+        /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
+        [HttpDelete]
+        [Route("Eliminar/{id_Usuario:int}")]
+        public IActionResult Eliminar(int id_Usuario)
+        {
+
+            try
+            {
+                Request peticion = _usuario.Eliminar(id_Usuario);
+                if (!peticion.Success)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });
+                }
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = peticion.Message });
+
+            }
+            catch (Exception error)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message });
             }

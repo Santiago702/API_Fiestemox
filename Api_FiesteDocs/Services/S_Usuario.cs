@@ -19,9 +19,9 @@ namespace Api_FiesteDocs.Services
             if (!existeUsuario)
             {
                 
-                usuario.Nombre.ToUpper();
-                usuario.Ciudad.ToUpper();
-                BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
+                usuario.Nombre = usuario.Nombre.ToUpper();
+                usuario.Ciudad = usuario.Ciudad.ToUpper();
+                usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
                 _context.Usuarios.Add(usuario);
                 _context.SaveChanges();
                 return new Request { Success = true, Message = "Creado Correctamente" };
