@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Api_FiesteDocs.Models;
+namespace Api_FiesteDocs.Entities;
 
 public partial class Partitura
 {

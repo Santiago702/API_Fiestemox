@@ -1,12 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Api_FiesteDocs.Data;
+using Api_FiesteDocs.Services.Interfaces;
+using Api_FiesteDocs.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
+//Servicios
+builder.Services.AddScoped<I_Usuario,S_Usuario>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {
