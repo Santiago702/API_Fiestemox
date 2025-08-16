@@ -9,13 +9,9 @@ public partial class Grupo
 
     public int IdUsuarioDirector { get; set; }
 
-    public string Nombre { get; set; } = null!;
+    public string Nombre { get; set; }
 
-    public string Ciudad { get; set; } = null!;
+    public string Ciudad { get; set; }
 
-    public string? Codigo { get; set; }
-
-    public virtual ICollection<Ensayo> Ensayos { get; set; } = new List<Ensayo>();
-
-    public virtual ICollection<Estudiante> Estudiantes { get; set; } = new List<Estudiante>();
+    public string Codigo { get; set; }
 }

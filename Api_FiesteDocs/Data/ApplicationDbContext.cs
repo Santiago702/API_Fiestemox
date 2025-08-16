@@ -33,7 +33,6 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-
     {
 
     }
@@ -54,11 +53,6 @@ public partial class ApplicationDbContext : DbContext
                 .HasPrecision(0)
                 .HasColumnName("hora_inicio");
             entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
-
-            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.Ensayos)
-                .HasForeignKey(d => d.IdGrupo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ensayo_grupo");
         });
 
         modelBuilder.Entity<Estudiante>(entity =>
@@ -69,22 +63,16 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
             entity.Property(e => e.Documento)
+                .IsRequired()
                 .HasMaxLength(12)
                 .HasColumnName("documento");
             entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
             entity.Property(e => e.IdInstrumento).HasColumnName("id_instrumento");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.TipoDocumento)
+                .IsRequired()
                 .HasMaxLength(4)
                 .HasColumnName("tipo_documento");
-
-            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.Estudiantes)
-                .HasForeignKey(d => d.IdGrupo)
-                .HasConstraintName("FK_estudiante_grupo1");
-
-            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Estudiantes)
-                .HasForeignKey(d => d.IdUsuario)
-                .HasConstraintName("FK_estudiante_usuario");
         });
 
         modelBuilder.Entity<Grupo>(entity =>
@@ -95,6 +83,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
             entity.Property(e => e.Ciudad)
+                .IsRequired()
                 .HasMaxLength(30)
                 .HasColumnName("ciudad");
             entity.Property(e => e.Codigo)
@@ -102,6 +91,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("codigo");
             entity.Property(e => e.IdUsuarioDirector).HasColumnName("id_usuario_director");
             entity.Property(e => e.Nombre)
+                .IsRequired()
                 .HasMaxLength(80)
                 .HasColumnName("nombre");
         });
@@ -119,13 +109,9 @@ public partial class ApplicationDbContext : DbContext
                 .ValueGeneratedOnAdd()
                 .HasColumnName("id_seccion");
             entity.Property(e => e.Nombre)
+                .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("nombre");
-
-            entity.HasOne(d => d.IdSeccionNavigation).WithMany(p => p.Instrumentos)
-                .HasForeignKey(d => d.IdSeccion)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_instrumento_seccion");
         });
 
         modelBuilder.Entity<Partitura>(entity =>
@@ -135,19 +121,18 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("partitura");
 
             entity.Property(e => e.IdPartitura).HasColumnName("id_partitura");
-            entity.Property(e => e.Archivo).HasColumnName("archivo");
+            entity.Property(e => e.Archivo)
+                .IsRequired()
+                .HasColumnName("archivo");
             entity.Property(e => e.Comentarios)
+                .IsRequired()
                 .HasMaxLength(100)
                 .HasColumnName("comentarios");
             entity.Property(e => e.IdSeccion).HasColumnName("id_seccion");
             entity.Property(e => e.Nombre)
+                .IsRequired()
                 .HasMaxLength(100)
                 .HasColumnName("nombre");
-
-            entity.HasOne(d => d.IdSeccionNavigation).WithMany(p => p.Partituras)
-                .HasForeignKey(d => d.IdSeccion)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_partitura_seccion");
         });
 
         modelBuilder.Entity<Seccion>(entity =>
@@ -158,6 +143,7 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdSeccion).HasColumnName("id_seccion");
             entity.Property(e => e.Descripcion)
+                .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("descripcion");
         });
@@ -173,25 +159,17 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(300)
                 .HasColumnName("comentarios");
             entity.Property(e => e.Descripcion)
+                .IsRequired()
                 .HasMaxLength(100)
                 .HasColumnName("descripcion");
             entity.Property(e => e.Detalles)
+                .IsRequired()
                 .HasMaxLength(500)
                 .HasColumnName("detalles");
             entity.Property(e => e.Evidencia).HasColumnName("evidencia");
             entity.Property(e => e.Foto).HasColumnName("foto");
             entity.Property(e => e.IdEnsayo).HasColumnName("id_ensayo");
             entity.Property(e => e.IdSeccion).HasColumnName("id_seccion");
-
-            entity.HasOne(d => d.IdEnsayoNavigation).WithMany(p => p.Trabajos)
-                .HasForeignKey(d => d.IdEnsayo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_trabajo_ensayo");
-
-            entity.HasOne(d => d.IdSeccionNavigation).WithMany(p => p.Trabajos)
-                .HasForeignKey(d => d.IdSeccion)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_trabajo_seccion");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
@@ -202,18 +180,24 @@ public partial class ApplicationDbContext : DbContext
 
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.Ciudad)
+                .IsRequired()
                 .HasMaxLength(20)
                 .HasColumnName("ciudad");
             entity.Property(e => e.Contrasena)
+                .IsRequired()
                 .HasMaxLength(150)
                 .HasColumnName("contrasena");
             entity.Property(e => e.Correo)
+                .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("correo");
             entity.Property(e => e.Estado).HasColumnName("estado");
-            entity.Property(e => e.Foto).HasColumnName("foto");
+            entity.Property(e => e.Foto)
+                .IsRequired()
+                .HasColumnName("foto");
             entity.Property(e => e.IdRol).HasColumnName("id_rol");
             entity.Property(e => e.Nombre)
+                .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("nombre");
         });

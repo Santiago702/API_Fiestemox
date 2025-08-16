@@ -14,8 +14,4 @@ public partial class Ensayo
     public TimeOnly HoraFin { get; set; }
 
     public int IdGrupo { get; set; }
-
-    public virtual Grupo IdGrupoNavigation { get; set; } = null!;
-
-    public virtual ICollection<Trabajo> Trabajos { get; set; } = new List<Trabajo>();
 }
