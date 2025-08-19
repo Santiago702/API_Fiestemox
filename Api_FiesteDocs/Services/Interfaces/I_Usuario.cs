@@ -11,12 +11,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// <returns>Lista de todos los Usuarios registrados en la BD.</returns>
         public List<Usuario> Listar();
 
-        /// <summary>
-        /// Obtiene la lista de estudiantes asociados a un grupo específico.
-        /// </summary>
-        /// <param name="id_Grupo">Identificador único del grupo.</param>
-        /// <returns>Lista de Usuarios que son estudiantes de ese grupo.</returns>
-        public List<Usuario> ListarEstudiantes(int id_Grupo);
+        
 
         /// <summary>
         /// Busca y obtiene un usuario a partir de su correo electrónico.

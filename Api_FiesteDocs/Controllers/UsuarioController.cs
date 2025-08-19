@@ -41,27 +41,7 @@ namespace Api_FiesteDocs.Controllers
 
         }
 
-        /// <summary>
-        /// Obtiene los datos de los estudiantes de un grupo o clase específico.
-        /// </summary>
-        /// <param name="id_Grupo">Id del grupo o clase del que se desea obtener los estudiantes.</param>
-        /// <returns>Respuesta HTTP con la lista de usuarios (rol estudiante) del grupo especificado en "response".</returns>
-        [HttpGet]
-        [Route("Estudiantes/{id_Grupo:int}")]
-        public IActionResult Estudiantes(int id_Grupo)
-        {
-            List<Usuario> lista = new List<Usuario>();
-            try
-            {
-                lista = _usuario.ListarEstudiantes(id_Grupo);
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = lista });
-
-            }
-            catch (Exception error)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = error.Message, response = lista });
-            }
-        }
+        
 
         /// <summary>
         /// Busca y devuelve un usuario a partir de su correo.
@@ -147,7 +127,7 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Usuario usuario)
+        public IActionResult Editar([FromBody] Usuario usuario = null)
         {
             try
             {

@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 //Servicios
 builder.Services.AddScoped<I_Usuario,S_Usuario>();
+builder.Services.AddScoped<I_Estudiante,S_Estudiante>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {

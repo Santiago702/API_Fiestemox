@@ -21,6 +21,7 @@ namespace Api_FiesteDocs.Services
                 
                 usuario.Nombre = usuario.Nombre.ToUpper();
                 usuario.Ciudad = usuario.Ciudad.ToUpper();
+                usuario.Estado = false;
                 usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
                 _context.Usuarios.Add(usuario);
                 _context.SaveChanges();
@@ -54,11 +55,24 @@ namespace Api_FiesteDocs.Services
                     ? usuarioExistente.Foto
                     : usuario.Foto;
 
+                usuarioExistente.Estado = (usuario.Estado)
+                    ? true 
+                    : false;
+
                 usuarioExistente.Ciudad = string.IsNullOrWhiteSpace(usuario.Ciudad)
                     ? usuarioExistente.Ciudad
                     : usuario.Ciudad.ToUpper();
 
-                 _context.SaveChanges();
+                if(usuarioExistente.IdRol != 0)
+                {
+                    usuarioExistente.IdRol = usuarioExistente.IdRol;
+                }
+                else
+                {
+                    usuarioExistente.IdRol = usuario.IdRol;
+                }
+
+                _context.SaveChanges();
                 return new Request { Success = true, Message = "Editado Correctamente" };
             }
 
@@ -95,13 +109,6 @@ namespace Api_FiesteDocs.Services
             return usuarios;
         }
 
-        public  List<Usuario> ListarEstudiantes(int id_Grupo)
-        {
-            List<Usuario> usuarios = new List<Usuario>();
-
-            usuarios =  _context.Usuarios.Where(u => u.IdRol == 2).ToList();
-            return usuarios;
-        }
 
         public  Usuario ObtenerCorreo(string correo)
         {
