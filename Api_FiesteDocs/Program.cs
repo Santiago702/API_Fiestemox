@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 //Servicios
 builder.Services.AddScoped<I_Usuario,S_Usuario>();
 builder.Services.AddScoped<I_Estudiante,S_Estudiante>();
+builder.Services.AddScoped<I_Grupo,S_Grupo>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {

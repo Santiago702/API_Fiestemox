@@ -16,18 +16,18 @@ namespace Api_FiesteDocs.Services
         public Request Crear(Usuario usuario)
         {
             bool existeUsuario = _context.Usuarios.Any(u => u.Correo == usuario.Correo);
-            if (!existeUsuario)
-            {
-                
-                usuario.Nombre = usuario.Nombre.ToUpper();
-                usuario.Ciudad = usuario.Ciudad.ToUpper();
-                usuario.Estado = false;
-                usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
-                _context.Usuarios.Add(usuario);
-                _context.SaveChanges();
-                return new Request { Success = true, Message = "Creado Correctamente" };
-            }
-            return new Request { Success = false, Message = "Correo ya Existente" };
+            if (existeUsuario)
+                return new Request { Success = false, Message = "Correo ya Existente" };
+
+            usuario.Nombre = usuario.Nombre.ToUpper();
+            usuario.Ciudad = usuario.Ciudad.ToUpper();
+            usuario.Estado = false;
+            usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
+            _context.Usuarios.Add(usuario);
+            _context.SaveChanges();
+            return new Request { Success = true, Message = "Creado Correctamente" };
+
+            
 
         }
 
