@@ -41,7 +41,7 @@ namespace Api_FiesteDocs.Controllers
         /// </summary>
         /// <param name="Id_Estudiante"> Id del Estudiante</param>
         /// <returns>Objeto con la informacion de usuario y estudiante</returns>
-        [HttpGet]
+        [HttpPost]
         [Route("ObtenerId/{Id_Estudiante:int}")]
         public IActionResult ObtenerId(int Id_Estudiante)
         {

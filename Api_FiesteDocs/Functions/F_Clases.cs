@@ -71,6 +71,22 @@ namespace Api_FiesteDocs.Functions
 
         }
 
-        
+        /// <summary>
+        /// Formatea un objeto <see cref="Seccion"/> aplicando reglas
+        /// de normalización como convertir a mayúsculas los campos de texto.
+        /// </summary>
+        /// <param name="seccion">Objeto seccion a formatear.</param>
+        /// <returns>Un nuevo objeto <see cref="Seccion"/> con los datos formateados.</returns>
+        public static Seccion Formatear(Seccion seccion)
+        {
+            return new Seccion
+            {
+                IdSeccion = seccion.IdSeccion,
+                Descripcion = seccion.Descripcion.ToUpper(),
+                IdGrupo = seccion.IdGrupo
+            };
+
+
+        }
     }
 }

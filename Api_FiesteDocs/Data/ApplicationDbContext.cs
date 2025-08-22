@@ -146,6 +146,8 @@ public partial class ApplicationDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("descripcion");
+
+            entity.Property(e => e.IdGrupo).HasColumnName("id_grupo");
         });
 
         modelBuilder.Entity<Trabajo>(entity =>

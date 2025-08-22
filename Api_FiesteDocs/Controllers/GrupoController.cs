@@ -71,9 +71,9 @@ namespace Api_FiesteDocs.Controllers
             {
                 resultado = _grupo.Editar(grupo);
                 if (!resultado.Success)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, success = resultado.Success });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, response = resultado.Success });
                 
-                return StatusCode(StatusCodes.Status200OK, new {mensaje = resultado.Message, success = resultado.Success});
+                return StatusCode(StatusCodes.Status200OK, new {mensaje = resultado.Message, response = resultado.Success});
             }
             catch(Exception ex)
             {
@@ -90,9 +90,9 @@ namespace Api_FiesteDocs.Controllers
             {
                 resultado = _grupo.Crear(grupo);
                 if (!resultado.Success)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, success = resultado.Success });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, response = resultado.Success });
 
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = resultado.Message, success = resultado.Success });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = resultado.Message, response = resultado.Success });
             }
             catch (Exception ex)
             {
@@ -109,9 +109,9 @@ namespace Api_FiesteDocs.Controllers
             {
                 resultado = _grupo.Eliminar(Id_Grupo);
                 if (!resultado.Success)
-                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, success = resultado.Success });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = resultado.Message, response = resultado.Success });
 
-                return StatusCode(StatusCodes.Status200OK, new { mensaje = resultado.Message, success = resultado.Success });
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = resultado.Message, response = resultado.Success });
             }
             catch (Exception ex)
             {
