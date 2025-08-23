@@ -32,8 +32,8 @@ namespace Api_FiesteDocs.Controllers
         }
 
         [HttpPost]
-        [Route("ObtenerGrupos/{Id_Director:int}")]
-        public IActionResult ObtenerGrupos(int Id_Director)
+        [Route("ObtenerIdDirector/{Id_Director:int}")]
+        public IActionResult ObtenerIdDirector(int Id_Director)
         {
 
             try
@@ -48,8 +48,24 @@ namespace Api_FiesteDocs.Controllers
         }
 
         [HttpPost]
-        [Route("ObtenerGrupo/{Id_Grupo:int}")]
-        public IActionResult ObtenerGrupo(int Id_Grupo)
+        [Route("ObtenerIdEstudiante/{Id_Estudiante:int}")]
+        public IActionResult ObtenerIdEstudiante(int Id_Estudiante)
+        {
+
+            try
+            {
+                List<Grupo> grupos = _grupo.ObtenerIdEstudiante(Id_Estudiante);
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Listados", response = grupos });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("Obtener/{Id_Grupo:int}")]
+        public IActionResult Obtener(int Id_Grupo)
         {
             try { 
                 Grupo grupo = _grupo.ObtenerIdGrupo(Id_Grupo);

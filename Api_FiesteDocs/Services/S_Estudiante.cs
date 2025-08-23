@@ -54,9 +54,8 @@ namespace Api_FiesteDocs.Services
                 var nuevoEstudiante = new Estudiante
                 {
                     Documento = estudiante.Estudiante.Documento?.Trim(),
-                    TipoDocumento = estudiante.Estudiante.TipoDocumento?.Trim().ToUpperInvariant(),
-                    IdInstrumento = estudiante.Estudiante.IdInstrumento, 
-                    IdGrupo = estudiante.Estudiante.IdGrupo, 
+                    TipoDocumento = estudiante.Estudiante.TipoDocumento?.Trim().ToUpper(),
+                    IdInstrumento = estudiante.Estudiante.IdInstrumento,
                     IdUsuario = nuevoUsuario.IdUsuario
                 };
 
@@ -96,10 +95,6 @@ namespace Api_FiesteDocs.Services
             dataEst.TipoDocumento = string.IsNullOrEmpty(estudiante.TipoDocumento)
                 ? dataEst.TipoDocumento 
                 : estudiante.TipoDocumento;
-
-            dataEst.IdGrupo = (estudiante.IdGrupo <= 0 || !estudiante.IdGrupo.HasValue)
-                ? dataEst.IdGrupo
-                : estudiante.IdGrupo;
 
             dataEst.IdInstrumento = (estudiante.IdInstrumento <= 0 || !estudiante.IdInstrumento.HasValue)
                 ? dataEst.IdInstrumento
@@ -162,15 +157,25 @@ namespace Api_FiesteDocs.Services
 
         public List<InfoEstudiante> Listar(int Id_Grupo)
         {
-            return (from e in _context.Estudiantes
-                    join u in _context.Usuarios on e.IdUsuario equals u.IdUsuario
-                    where e.IdGrupo == Id_Grupo
-                    select new InfoEstudiante
-                    {
-                        Estudiante = e,
-                        Usuario = u
-                    }).ToList();
+            var query = _context.Asignaciones
+                .AsNoTracking()
+                .Where(a => a.IdGrupo == Id_Grupo)
+                .Join(_context.Estudiantes,
+                      a => a.IdEstudiante,
+                      e => e.IdEstudiante,
+                      (a, e) => new { Est = e })
+                .Join(_context.Usuarios,
+                      ae => ae.Est.IdUsuario,
+                      u => u.IdUsuario,
+                      (ae, u) => new InfoEstudiante
+                      {
+                          Estudiante = ae.Est,
+                          Usuario = u
+                      });
+
+            return query.ToList();
         }
+
 
 
         public InfoEstudiante ObtenerId(int Id_Estudiante)

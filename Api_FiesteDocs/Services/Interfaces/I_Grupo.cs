@@ -28,6 +28,13 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// <returns>Un objeto <see cref="Grupo"/> con la información del grupo, o null si no existe.</returns>
         public Grupo ObtenerIdGrupo(int Id_Grupo);
 
+        /// <summary>
+        /// Obtiene todos los grupos musicales que pertenecen a un estudiante en específico.
+        /// </summary>
+        /// <param name="Id_Estudiante">Identificador único del usuario estudiante.</param>
+        /// <returns>Lista de objetos <see cref="Grupo"/> asociados al estudiante.</returns>
+        public List<Grupo> ObtenerIdEstudiante(int Id_Estudiante);
+
 
         /// <summary>
         /// Edita o actualiza los datos de un grupo musical existente.

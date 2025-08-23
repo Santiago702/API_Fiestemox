@@ -77,6 +77,17 @@ namespace Api_FiesteDocs.Services
             return grupo;
         }
 
+        public List<Grupo> ObtenerIdEstudiante(int Id_Estudiante)
+        {
+            return _context.Asignaciones
+                .Where(a => a.IdEstudiante == Id_Estudiante)
+                .Join(_context.Grupos,
+                      a => a.IdGrupo,
+                      g => g.IdGrupo,
+                      (a, g) => g)
+                .ToList();
+        }
+
         public List<Grupo> ObtenerIdDirector(int Id_Director)
         {
             List<Grupo> lista = new List<Grupo>();

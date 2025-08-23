@@ -13,7 +13,5 @@ public partial class Estudiante
 
     public int? IdInstrumento { get; set; }
 
-    public int? IdGrupo { get; set; }
-
     public int? IdUsuario { get; set; }
 }
