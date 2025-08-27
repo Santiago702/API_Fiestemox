@@ -13,6 +13,8 @@ builder.Services.AddScoped<I_Usuario,S_Usuario>();
 builder.Services.AddScoped<I_Estudiante,S_Estudiante>();
 builder.Services.AddScoped<I_Grupo,S_Grupo>();
 builder.Services.AddScoped<I_Seccion,S_Seccion>();
+builder.Services.AddScoped<I_Instrumento,S_Instrumento>();
+builder.Services.AddScoped<I_Ensayo,S_Ensayo>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {

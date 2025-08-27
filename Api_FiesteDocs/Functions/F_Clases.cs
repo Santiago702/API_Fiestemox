@@ -43,7 +43,6 @@ namespace Api_FiesteDocs.Functions
                 IdEstudiante = estudiante.IdEstudiante,
                 Documento = estudiante.Documento,
                 TipoDocumento = estudiante.TipoDocumento.ToUpper(),
-                IdGrupo = estudiante.IdGrupo,
                 IdInstrumento = estudiante.IdInstrumento,
                 IdUsuario = estudiante.IdUsuario
             };
