@@ -10,7 +10,7 @@ namespace Api_FiesteDocs.Services
         private ApplicationDbContext _context;
         public S_Ensayo(ApplicationDbContext context)
         {
-            ApplicationDbContext _context = context;
+            _context = context;
         }
 
         public Request Crear(Ensayo ensayo)
