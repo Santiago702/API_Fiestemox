@@ -1,11 +1,13 @@
 ﻿using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api_FiesteDocs.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class InstrumentoController : ControllerBase
     {

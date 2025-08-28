@@ -1,7 +1,8 @@
 ﻿using Api_FiesteDocs.Data;
-using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Entities;
+using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -24,6 +25,7 @@ namespace Api_FiesteDocs.Controllers
         /// </summary>
         /// <returns>Respuesta HTTP con la lista de usuarios en la propiedad "response".</returns>
         [HttpGet]
+        [Authorize]
         [Route("Listar")]
         public IActionResult Listar()
         {
@@ -75,6 +77,7 @@ namespace Api_FiesteDocs.Controllers
         /// <param name="id_Usuario">Identificador del usuario a buscar (en la ruta).</param>
         /// <returns>Respuesta HTTP con el usuario encontrado en "response", o un mensaje indicando que no se encontró.</returns>
         [HttpPost]
+        [Authorize]
         [Route("ObtenerId/{id_Usuario:int}")]
         public IActionResult ObtenerId(int id_Usuario)
         {
@@ -101,6 +104,7 @@ namespace Api_FiesteDocs.Controllers
         /// <param name="usuario">Objeto Usuario con los datos que se desean crear (recibido en el body).</param>
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
+        [Authorize]
         [Route("Crear")]
         public IActionResult Crear([FromBody] Usuario usuario)
         {
@@ -126,6 +130,7 @@ namespace Api_FiesteDocs.Controllers
         /// <param name="usuario">Objeto Usuario con los datos actualizados (recibido en el body). Debe contener el Id para identificar el registro a editar.</param>
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
+        [Authorize]
         [Route("Editar")]
         public IActionResult Editar([FromBody] Usuario usuario = null)
         {
@@ -151,6 +156,7 @@ namespace Api_FiesteDocs.Controllers
         /// <param name="id_Usuario">Identificador del usuario a eliminar (en la ruta).</param>
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpDelete]
+        [Authorize]
         [Route("Eliminar/{id_Usuario:int}")]
         public IActionResult Eliminar(int id_Usuario)
         {

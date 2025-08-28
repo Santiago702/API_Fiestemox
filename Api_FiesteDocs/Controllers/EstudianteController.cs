@@ -1,12 +1,14 @@
 ﻿using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api_FiesteDocs.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class EstudianteController : ControllerBase
     {
@@ -48,6 +50,26 @@ namespace Api_FiesteDocs.Controllers
             try
             {
                 var estudiante = _estudiante.ObtenerId(Id_Estudiante);
+                return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = estudiante });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la información de un estudiante específico junto con su usuario asociado.
+        /// </summary>
+        /// <param name="Id_Estudiante"> Id del Usuario</param>
+        /// <returns>Objeto con la informacion de usuario y estudiante</returns>
+        [HttpPost]
+        [Route("ObtenerIdUsuario/{Id_Usuario:int}")]
+        public IActionResult ObtenerIdUsuario(int Id_Usuario)
+        {
+            try
+            {
+                var estudiante = _estudiante.ObtenerIdUsuario(Id_Usuario);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = estudiante });
             }
             catch (Exception ex)

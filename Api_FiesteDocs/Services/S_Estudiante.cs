@@ -190,5 +190,28 @@ namespace Api_FiesteDocs.Services
                     }).FirstOrDefault();
         }
 
+        public InfoEstudiante ObtenerIdUsuario(int Id_Usuario)
+        {
+            if (Id_Usuario <= 0)
+                return null;
+
+            var result = _context.Estudiantes
+                .AsNoTracking()
+                .Where(e => e.IdUsuario == Id_Usuario)
+                .Join(
+                    _context.Usuarios.AsNoTracking(),
+                    e => e.IdUsuario,
+                    u => u.IdUsuario,
+                    (e, u) => new InfoEstudiante
+                    {
+                        Estudiante = e,
+                        Usuario = u
+                    })
+                .FirstOrDefault();
+
+            return result;
+        }
+
+
     }
 }

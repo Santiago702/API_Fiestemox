@@ -22,6 +22,14 @@ namespace Api_FiesteDocs.Services.Interfaces
         public InfoEstudiante ObtenerId(int Id_Estudiante);
 
         /// <summary>
+        /// Obtiene la información de un estudiante específico junto con su usuario asociado.
+        /// </summary>
+        /// <param name="Id_Estudiante">Identificador único del usuario.</param>
+        /// <returns>Un objeto <see cref="InfoEstudiante"/> con los datos combinados
+        /// del estudiante y su usuario.</returns>
+        public InfoEstudiante ObtenerIdUsuario(int Id_Usuario);
+
+        /// <summary>
         /// Edita los datos de un estudiante en la base de datos.
         /// </summary>
         /// <param name="estudiante">Objeto <see cref="Estudiante"/> con la información actualizada.</param>
