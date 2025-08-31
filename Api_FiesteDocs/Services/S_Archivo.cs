@@ -14,14 +14,14 @@ namespace Api_FiesteDocs.Services
         private readonly IConfiguration _configuration;
         private static string _token;
         private readonly DropboxClient _dbx;
-        public S_Archivo(IConfiguration configuration)
+        private readonly I_Dropbox _dropbox;
+        public S_Archivo(IConfiguration configuration, I_Dropbox dropbox)
         {
             _configuration = configuration;
-
-            var token = _configuration.GetSection("Token:Key").Value
-                        ?? throw new ArgumentNullException("El token de Dropbox no está configurado.");
-
-            _dbx = new DropboxClient(token); 
+            _dropbox = dropbox;
+            //var token = _configuration.GetSection("Token:Key").Value ?? throw new ArgumentNullException("El token de Dropbox no está configurado.");
+            _token = _dropbox.Token().Result;
+            _dbx = new DropboxClient(_token); 
         }
 
         public async Task<string> Crear(Partitura Partitura)
