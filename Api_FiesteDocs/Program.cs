@@ -46,6 +46,7 @@ builder.Services.AddScoped<I_Ensayo,S_Ensayo>();
 builder.Services.AddScoped<I_Trabajo,S_Trabajo>();
 builder.Services.AddScoped<I_Partitura,S_Partitura>();
 builder.Services.AddScoped<I_Autenticar, S_Autenticar>();
+builder.Services.AddScoped<I_Archivo, S_Archivo>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {

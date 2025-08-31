@@ -21,7 +21,7 @@ namespace Api_FiesteDocs.Services
                 return new Request { Success = false, Message = "Seccion vacía" };
             }
             
-            _context.Seccions.Add(F_Clases.Formatear(seccion));
+            _context.Seccions.Add(Clases.Formatear(seccion));
             _context.SaveChanges();
             return new Request { Success = true, Message = "Sección creada exitosamente."};
         }

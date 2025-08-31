@@ -24,6 +24,8 @@ namespace Api_FiesteDocs.Services
 
         public Request Crear(Partitura partitura)
         {
+            partitura.Carpeta = partitura.Carpeta.Trim().ToUpper();
+            partitura.Nombre = partitura.Nombre.Trim().ToUpper();
             _context.Partituras.Add(partitura);
             _context.SaveChanges();
             return new Request { Message = "Partitura creada correctamente", Success = true };
@@ -50,6 +52,14 @@ namespace Api_FiesteDocs.Services
             partituraExistente.Nombre = string.IsNullOrEmpty(partitura.Nombre)
                 ? partituraExistente.Nombre 
                 : partitura.Nombre.ToUpper();
+
+            partituraExistente.Carpeta = string.IsNullOrEmpty(partitura.Carpeta)
+                ? partituraExistente.Carpeta 
+                : partitura.Carpeta.Trim().ToUpper();
+
+            partituraExistente.Tipo = string.IsNullOrEmpty(partitura.Tipo)
+                ? partituraExistente.Tipo 
+                : partitura.Tipo.Trim().ToLower();
 
             _context.SaveChanges();
             return new Request { Message = "Partitura editada correctamente", Success = true };

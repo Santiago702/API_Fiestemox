@@ -20,7 +20,7 @@ namespace Api_FiesteDocs.Services
         {
             if (grupo == null)
                 return new Request { Success = false, Message = "El objeto está vacío" };
-            Grupo grupoF = F_Clases.Formatear(grupo);
+            Grupo grupoF = Clases.Formatear(grupo);
             _context.Grupos.Add(grupoF);
             _context.SaveChanges();
             return new Request { Success = true, Message = "Creado Correctamente" };

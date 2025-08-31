@@ -14,4 +14,6 @@ public partial class Partitura
     public string Comentarios { get; set; }
 
     public string Nombre { get; set; }
-}
+    public string Carpeta { get; set; }
+    public string Tipo { get; set; }
+    }

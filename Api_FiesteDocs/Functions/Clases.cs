@@ -6,7 +6,7 @@ namespace Api_FiesteDocs.Functions
     /// Contiene funciones auxiliares para formatear y manipular entidades
     /// del sistema antes de ser procesadas en los servicios.
     /// </summary>
-    public class F_Clases
+    public class Clases
     {
 
         /// <summary>
