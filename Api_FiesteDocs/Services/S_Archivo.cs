@@ -1,96 +1,97 @@
-﻿using Api_FiesteDocs.Data;
-using Api_FiesteDocs.Entities;
+﻿using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Functions;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
 using Dropbox.Api;
 using Dropbox.Api.Files;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 
 namespace Api_FiesteDocs.Services
 {
-    public class S_Archivo:I_Archivo
+    public class S_Archivo : I_Archivo
     {
-        private readonly IConfiguration _configuration;
-        private static string _token;
-        private readonly DropboxClient _dbx;
         private readonly I_Dropbox _dropbox;
-        public S_Archivo(IConfiguration configuration, I_Dropbox dropbox)
+        private DropboxClient _dbx;
+
+        public S_Archivo(I_Dropbox dropbox)
         {
-            _configuration = configuration;
-            _dropbox = dropbox;
-            //var token = _configuration.GetSection("Token:Key").Value ?? throw new ArgumentNullException("El token de Dropbox no está configurado.");
-            _token = _dropbox.Token().Result;
-            _dbx = new DropboxClient(_token); 
+            _dropbox = dropbox ?? throw new ArgumentNullException(nameof(dropbox));
         }
 
-        public async Task<string> Crear(Partitura Partitura)
+        /// <summary>
+        /// Asegura que _dbx esté inicializado con un token válido.
+        /// </summary>
+        private async Task<DropboxClient> GetClientAsync()
         {
-            IFormFile Archivo = Archivos.ConvertirIFormFile(Partitura);
-            if (Archivo == null || Archivo.Length == 0)
-                return null;
-            string Ruta = $"/{Partitura.Carpeta.ToUpper()}/{Archivo.FileName}";
+            if (_dbx == null)
+            {
+                string token = await _dropbox.Token();
+                _dbx = new DropboxClient(token);
+            }
+            return _dbx;
+        }
+
+        public async Task<string> Crear(Partitura partitura)
+        {
+            var dbx = await GetClientAsync();
+
+            IFormFile archivo = Archivos.ConvertirIFormFile(partitura);
+            if (archivo == null || archivo.Length == 0) return null;
+
+            string ruta = $"/{partitura.Carpeta.ToUpper()}/{archivo.FileName}";
+
             try
             {
-                using var stream = Archivo.OpenReadStream();
-                var MetaData = await _dbx.Files.UploadAsync(
-                    Ruta,
+                using var stream = archivo.OpenReadStream();
+                var metadata = await dbx.Files.UploadAsync(
+                    ruta,
                     WriteMode.Add.Instance,
                     autorename: true,
                     body: stream
-                    );
+                );
 
-                return MetaData.PathDisplay + Partitura.Tipo.Trim().ToLower();
+                return metadata.PathDisplay + "." + partitura.Tipo.Trim().ToLower();
             }
-            catch(ApiException<UploadError> ex)
+            catch (ApiException<UploadError> ex)
             {
                 Console.WriteLine($"Upload error: {ex.ErrorResponse}");
                 throw;
             }
-            
-
-
         }
 
-        public async Task<List<MetaDatos>> Listar(string NombreCarpeta)
+        public async Task<List<MetaDatos>> Listar(string nombreCarpeta)
         {
+            var dbx = await GetClientAsync();
             List<FileMetadata> archivosResultantes = new List<FileMetadata>();
-            string carpetaNormalizada = Archivos.NormalizarCarpeta(NombreCarpeta);
+            string carpetaNormalizada = Archivos.NormalizarCarpeta(nombreCarpeta);
+            string rutaListar = string.IsNullOrEmpty(carpetaNormalizada) ? string.Empty : carpetaNormalizada;
 
-            string rutaListar = string.IsNullOrEmpty(carpetaNormalizada) 
-                ? string.Empty 
-                : carpetaNormalizada;
-
-            var lista = await _dbx.Files.ListFolderAsync(rutaListar);
-
+            var lista = await dbx.Files.ListFolderAsync(rutaListar);
             archivosResultantes.AddRange(lista.Entries.Where(e => e.IsFile).Select(e => e.AsFile));
+
             while (lista.HasMore)
             {
-                lista = await _dbx.Files.ListFolderContinueAsync(lista.Cursor);
+                lista = await dbx.Files.ListFolderContinueAsync(lista.Cursor);
                 archivosResultantes.AddRange(lista.Entries.Where(e => e.IsFile).Select(e => e.AsFile));
             }
-            List<MetaDatos> datos = new List<MetaDatos>();
-            foreach (var archivo in archivosResultantes)
+
+            return archivosResultantes.Select(a => new MetaDatos
             {
-                datos.Add(new MetaDatos
-                {
-                    Nombre = archivo.Name,
-                    Ruta = archivo.PathDisplay,
-                    Tamano = Math.Round(archivo.Size / 1024.0, 2) + " KB"
-                });
-            }
-            return datos;
+                Nombre = a.Name,
+                Ruta = a.PathDisplay,
+                Tamano = Math.Round(a.Size / 1024.0, 2) + " KB"
+            }).ToList();
         }
 
-        public async Task<string> EliminarNombre(Partitura Partitura)
+        public async Task<string> EliminarNombre(Partitura partitura)
         {
-            if (string.IsNullOrWhiteSpace(Partitura.Nombre)) 
-                throw new ArgumentException("Nombre de Archivo vacío", nameof(Partitura.Nombre));
-            
-            string carpetaNormalizada = Archivos.NormalizarCarpeta(Partitura.Carpeta);
-            string ruta = string.IsNullOrEmpty(carpetaNormalizada) 
-                ? $"/{Partitura.Nombre.Trim()}" 
-                : $"{carpetaNormalizada}/{Partitura.Nombre.Trim()}";
+            if (string.IsNullOrWhiteSpace(partitura.Nombre))
+                throw new ArgumentException("Nombre de Archivo vacío", nameof(partitura.Nombre));
+
+            string carpetaNormalizada = Archivos.NormalizarCarpeta(partitura.Carpeta);
+            string ruta = string.IsNullOrEmpty(carpetaNormalizada)
+                ? $"/{partitura.Nombre.Trim()}"
+                : $"{carpetaNormalizada}/{partitura.Nombre.Trim()}";
 
             return await EliminarRuta(ruta);
         }
@@ -100,18 +101,16 @@ namespace Api_FiesteDocs.Services
             if (string.IsNullOrWhiteSpace(ruta))
                 throw new ArgumentException("Ruta vacía", nameof(ruta));
 
-            if (!ruta.StartsWith("/"))
-                ruta = "/" + ruta.Trim();
+            if (!ruta.StartsWith("/")) ruta = "/" + ruta.Trim();
+            var dbx = await GetClientAsync();
 
             try
             {
-                var metadata = await _dbx.Files.GetMetadataAsync(ruta);
-
+                var metadata = await dbx.Files.GetMetadataAsync(ruta);
                 if (metadata == null)
                     return $"El archivo o carpeta '{ruta}' no existe en Dropbox.";
 
-                var result = await _dbx.Files.DeleteV2Async(ruta);
-
+                var result = await dbx.Files.DeleteV2Async(ruta);
                 return $"Eliminado correctamente: {result.Metadata.Name}";
             }
             catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath && ex.ErrorResponse.AsPath.Value.IsNotFound)
@@ -123,6 +122,5 @@ namespace Api_FiesteDocs.Services
                 throw new InvalidOperationException($"Error eliminando {ruta} en Dropbox: {ex.ErrorResponse}", ex);
             }
         }
-
     }
 }
