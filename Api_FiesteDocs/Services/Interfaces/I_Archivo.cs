@@ -15,7 +15,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="Partitura">Objeto con la información del archivo</param>
         /// <returns>Ruta completa del archivo en Dropbox.</returns>
-        Task<string> Crear(Partitura Partitura);
+        Task<Request> Crear(Partitura Partitura);
 
         /// <summary>
         /// Lista los archivos de una carpeta en Dropbox (excluye las subcarpetas).
@@ -30,13 +30,13 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="Partitura">Objeto con la información del archivo</param>
         /// <returns>Objeto Metadata con información sobre el archivo eliminado.</returns>
-        Task<string> EliminarNombre(Partitura Partitura);
+        Task<Request> EliminarNombre(Partitura Partitura);
 
         /// <summary>
         /// Elimina un archivo de Dropbox utilizando su ruta completa.
         /// </summary>
         /// <param name="Ruta">Ruta completa al archivo en Dropbox (incluyendo carpeta y nombre).</param>
         /// <returns>String con información sobre el archivo eliminado.</returns>
-        Task<string> EliminarRuta(string Ruta);
+        Task<Request> EliminarRuta(string Ruta);
     }
 }

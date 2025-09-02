@@ -40,12 +40,14 @@ namespace Api_FiesteDocs.Controllers
         {
             try
             {
-                string respuesta = await _archivo.Crear(Partitura);
+                Request respuesta = await _archivo.Crear(Partitura);
+                if(!respuesta.Success)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = respuesta.Message });
                 return StatusCode(StatusCodes.Status200OK, new { Message = respuesta });
             }
             catch(Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error al crear el archivo en Dropbox: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
             }
         }
 
@@ -55,8 +57,11 @@ namespace Api_FiesteDocs.Controllers
         {
             try
             {
-                string Nombre = await _archivo.EliminarNombre(Partitura);
-                return StatusCode(StatusCodes.Status200OK, new { Message = Nombre});
+                Request respuesta = await _archivo.EliminarNombre(Partitura);
+                if(!respuesta.Success)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = respuesta.Message });
+
+                return StatusCode(StatusCodes.Status200OK, new { Message = respuesta.Message});
             }
             catch (ArgumentException argEx)
             {
@@ -68,7 +73,7 @@ namespace Api_FiesteDocs.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error interno del servidor", Response = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = $"Error interno del servidor: {ex.Message}"});
             }
         }
 
@@ -78,8 +83,10 @@ namespace Api_FiesteDocs.Controllers
         {
             try
             {
-                string Nombre = await _archivo.EliminarRuta(Ruta);
-                return StatusCode(StatusCodes.Status200OK, new { Message = Nombre});
+                Request respuesta = await _archivo.EliminarRuta(Ruta);
+                if(!respuesta.Success)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = respuesta.Message });
+                return StatusCode(StatusCodes.Status200OK, new { Message = respuesta.Message});
             }
             catch (ArgumentException argEx)
             {
@@ -91,7 +98,7 @@ namespace Api_FiesteDocs.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error interno del servidor", Response = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = $"Error interno del servidor {ex.Message}"});
             }
         }
 

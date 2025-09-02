@@ -1,4 +1,5 @@
-﻿using Dropbox.Api;
+﻿using Api_FiesteDocs.Models;
+using Dropbox.Api;
 
 namespace Api_FiesteDocs.Services.Interfaces
 {
@@ -13,25 +14,25 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="nombreActual">Nombre actual de la carpeta.</param>
         /// <param name="nuevoNombre">Nuevo nombre que tendrá la carpeta.</param>
-        Task Editar(string nombreActual, string nuevoNombre);
+        Task<Request> Editar(string nombreActual, string nuevoNombre);
 
         /// <summary>
         /// Crea una nueva carpeta en Dropbox en la ruta especificada.
         /// </summary>
-        /// <param name="folderPath">Ruta/nombre de la carpeta a crear.</param>
-        Task Crear(string folderPath);
+        /// <param name="rutaCarpeta">Ruta/nombre de la carpeta a crear.</param>
+        Task<Request> Crear(string rutaCarpeta);
 
         /// <summary>
-        /// Lista las carpetas y archivos dentro del directorio raíz de Dropbox.
-        /// Solo devuelve información de primer nivel (no recursivo).
+        /// Lista las carpetas y archivos dentro de un directorio específico de Dropbox.
+        /// /// <param name="Ruta">Nombre de la carpeta donde se va a buscar subcarpetas</param>
         /// </summary>
-        
-        Task Listar();
+
+        Task<List<MetaDatos>>Listar(string Ruta);
 
         /// <summary>
         /// Elimina una carpeta existente en Dropbox según el nombre indicado.
         /// </summary>
-        /// <param name="folderName">Nombre de la carpeta a eliminar.</param>
-        Task Eliminar(string folderName);
+        /// <param name="nombreCarpeta">Nombre de la carpeta a eliminar.</param>
+        Task<Request>Eliminar(string nombreCarpeta);
     }
 }

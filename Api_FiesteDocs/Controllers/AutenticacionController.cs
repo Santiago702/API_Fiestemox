@@ -1,7 +1,6 @@
 ﻿using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -38,7 +37,6 @@ namespace Api_FiesteDocs.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [Route("Dropbox/Validar")]
         public async Task<IActionResult> RefrescarToken()
         {

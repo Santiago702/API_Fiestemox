@@ -31,7 +31,7 @@ namespace Api_FiesteDocs.Services
             return _dbx;
         }
 
-        public async Task<string> Crear(Partitura partitura)
+        public async Task<Request> Crear(Partitura partitura)
         {
             var dbx = await GetClientAsync();
 
@@ -49,13 +49,16 @@ namespace Api_FiesteDocs.Services
                     autorename: true,
                     body: stream
                 );
-
-                return metadata.PathDisplay + "." + partitura.Tipo.Trim().ToLower();
+                
+                return new Request { 
+                    Message = metadata.PathDisplay + "." + partitura.Tipo.Trim().ToLower(), 
+                    Success = true };
             }
             catch (ApiException<UploadError> ex)
             {
-                Console.WriteLine($"Upload error: {ex.ErrorResponse}");
-                throw;
+                return new Request { 
+                    Message = $"Error subiendo archivo a Dropbox: {ex.ErrorResponse}", 
+                    Success = false };
             }
         }
 
@@ -83,7 +86,7 @@ namespace Api_FiesteDocs.Services
             }).ToList();
         }
 
-        public async Task<string> EliminarNombre(Partitura partitura)
+        public async Task<Request> EliminarNombre(Partitura partitura)
         {
             if (string.IsNullOrWhiteSpace(partitura.Nombre))
                 throw new ArgumentException("Nombre de Archivo vacío", nameof(partitura.Nombre));
@@ -96,7 +99,7 @@ namespace Api_FiesteDocs.Services
             return await EliminarRuta(ruta);
         }
 
-        public async Task<string> EliminarRuta(string ruta)
+        public async Task<Request> EliminarRuta(string ruta)
         {
             if (string.IsNullOrWhiteSpace(ruta))
                 throw new ArgumentException("Ruta vacía", nameof(ruta));
@@ -108,18 +111,28 @@ namespace Api_FiesteDocs.Services
             {
                 var metadata = await dbx.Files.GetMetadataAsync(ruta);
                 if (metadata == null)
-                    return $"El archivo o carpeta '{ruta}' no existe en Dropbox.";
+                    return new Request { 
+                        Message = $"El archivo o carpeta '{ruta}' no existe en Dropbox.",
+                        Success = false};
 
                 var result = await dbx.Files.DeleteV2Async(ruta);
-                return $"Eliminado correctamente: {result.Metadata.Name}";
+                return new Request
+                {
+                    Message = $"Eliminado correctamente: {result.Metadata.Name}",
+                    Success = true
+                };
             }
             catch (ApiException<GetMetadataError> ex) when (ex.ErrorResponse.IsPath && ex.ErrorResponse.AsPath.Value.IsNotFound)
             {
-                return $"No se encontró el archivo o carpeta en la ruta: {ruta}";
+                return new Request { 
+                    Message = $"No se encontró el archivo o carpeta en la ruta: {ruta}", 
+                    Success = false };
             }
             catch (ApiException<DeleteError> ex)
             {
-                throw new InvalidOperationException($"Error eliminando {ruta} en Dropbox: {ex.ErrorResponse}", ex);
+                return new Request { 
+                    Message = $"Error eliminando archivo o carpeta: {ex.ErrorResponse}", 
+                    Success = false  };
             }
         }
     }
