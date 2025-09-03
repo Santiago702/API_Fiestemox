@@ -48,6 +48,7 @@ builder.Services.AddScoped<I_Partitura,S_Partitura>();
 builder.Services.AddScoped<I_Autenticar, S_Autenticar>();
 builder.Services.AddSingleton<I_Dropbox, S_Dropbox>();
 builder.Services.AddSingleton<I_Archivo, S_Archivo>();
+builder.Services.AddSingleton<I_Carpeta, S_Carpeta>();
 // Configuración de Swagger personalizada
 builder.Services.AddSwaggerGen(c =>
 {
