@@ -2,6 +2,7 @@
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
 {
@@ -13,9 +14,9 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Usuario usuario)
+        public async Task<Request> Crear(Usuario usuario)
         {
-            bool existeUsuario = _context.Usuarios.Any(u => u.Correo == usuario.Correo);
+            bool existeUsuario = await _context.Usuarios.AnyAsync(u => u.Correo == usuario.Correo);
             if (existeUsuario)
                 return new Request { Success = false, Message = "Correo ya Existente" };
 
@@ -23,18 +24,18 @@ namespace Api_FiesteDocs.Services
             usuario.Ciudad = usuario.Ciudad.ToUpper();
             usuario.Estado = false;
             usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
-            _context.Usuarios.Add(usuario);
-            _context.SaveChanges();
+            await _context.Usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Creado Correctamente" };
 
             
 
         }
 
-        public  Request Editar(Usuario usuario)
+        public  async Task<Request> Editar(Usuario usuario)
         {
             
-            var usuarioExistente =  _context.Usuarios.FirstOrDefault(u => u.IdUsuario == usuario.IdUsuario);
+            var usuarioExistente =  await _context.Usuarios.FirstOrDefaultAsync(u => u.IdUsuario == usuario.IdUsuario);
 
             if (usuarioExistente != null)
             {
@@ -72,7 +73,7 @@ namespace Api_FiesteDocs.Services
                     usuarioExistente.IdRol = usuario.IdRol;
                 }
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return new Request { Success = true, Message = "Editado Correctamente" };
             }
 
@@ -81,7 +82,7 @@ namespace Api_FiesteDocs.Services
 
 
 
-        public  Request Eliminar(int id_Usuario)
+        public async Task<Request> Eliminar(int id_Usuario)
         {
             if (id_Usuario != 0)
             {
@@ -90,7 +91,7 @@ namespace Api_FiesteDocs.Services
                 if (usuarioSeleccionado != null)
                 {
                     _context.Usuarios.Remove(usuarioSeleccionado);
-                     _context.SaveChanges();
+                     await _context.SaveChangesAsync();
                     return new Request { Success = true, Message = "Usuario Eliminado" };
                 }
 
@@ -101,24 +102,24 @@ namespace Api_FiesteDocs.Services
         }
 
 
-        public  List<Usuario> Listar()
+        public async Task<List<Usuario>> Listar()
         {
             List<Usuario> usuarios = new List<Usuario>();
 
-            usuarios =  _context.Usuarios.ToList();
+            usuarios =  await _context.Usuarios.AsNoTracking().ToListAsync();
             return usuarios;
         }
 
 
-        public  Usuario ObtenerCorreo(string correo)
+        public async Task<Usuario> ObtenerCorreo(string correo)
         {
-            var usuario =  _context.Usuarios.FirstOrDefault(u => u.Correo == correo);
+            var usuario =  await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Correo == correo);
             return usuario;
         }
 
-        public  Usuario ObtenerId(int id_Usuario)
+        public async Task<Usuario> ObtenerId(int id_Usuario)
         {
-            var usuario =  _context.Usuarios.FirstOrDefault(u => u.IdUsuario == id_Usuario);
+            var usuario =  await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.IdUsuario == id_Usuario);
             return usuario;
         }
     }

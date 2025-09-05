@@ -20,11 +20,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpGet]
         [Route("Listar")]
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
             try
             {
-                List<Instrumento> instrumentos = _Instrumento.Listar();
+                List<Instrumento> instrumentos = await _Instrumento.Listar();
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = instrumentos });
             }
             catch (Exception ex)
@@ -36,11 +36,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("ListarIdGrupo/{Id_Grupo:int}")]
-        public IActionResult ListarIdGrupo(int Id_Grupo)
+        public async Task<IActionResult> ListarIdGrupo(int Id_Grupo)
         {
             try
             {
-                List<Instrumento> instrumentos = _Instrumento.ListarIdGrupo(Id_Grupo);
+                List<Instrumento> instrumentos = await _Instrumento.ListarIdGrupo(Id_Grupo);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = instrumentos });
             }
             catch (Exception ex)
@@ -52,11 +52,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("ListarIdSeccion/{Id_Seccion:int}")]
-        public IActionResult ListarIdSeccion(int Id_Seccion)
+        public async Task<IActionResult> ListarIdSeccion(int Id_Seccion)
         {
             try
             {
-                List<Instrumento> instrumentos = _Instrumento.ListarIdSeccion(Id_Seccion);
+                List<Instrumento> instrumentos = await _Instrumento.ListarIdSeccion(Id_Seccion);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = instrumentos });
             }
             catch (Exception ex)
@@ -68,11 +68,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("Obtener/{Id_Instrumento:int}")]
-        public IActionResult Obtener(int Id_Instrumento)
+        public async Task<IActionResult> Obtener(int Id_Instrumento)
         {
             try
             {
-                Instrumento instrumento = _Instrumento.Obtener(Id_Instrumento);
+                Instrumento instrumento = await _Instrumento.Obtener(Id_Instrumento);
                 if (instrumento == null)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = "Instrumento no encontrado" });
@@ -88,11 +88,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Crear")]
-        public IActionResult Crear([FromBody] Instrumento instrumento)
+        public async Task<IActionResult> Crear([FromBody] Instrumento instrumento)
         {
             try
             {
-                var result = _Instrumento.Crear(instrumento);
+                var result = await _Instrumento.Crear(instrumento);
                 if (!result.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message, response = result.Success });
@@ -108,11 +108,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Instrumento instrumento)
+        public async Task<IActionResult> Editar([FromBody] Instrumento instrumento)
         {
             try
             {
-                var result = _Instrumento.Editar(instrumento);
+                var result = await _Instrumento.Editar(instrumento);
                 if (!result.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message, response = result.Success });
@@ -128,11 +128,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{Id_Instrumento:int}")]
-        public IActionResult Eliminar(int Id_Instrumento)
+        public async Task<IActionResult> Eliminar(int Id_Instrumento)
         {
             try
             {
-                var result = _Instrumento.Eliminar(Id_Instrumento);
+                var result = await _Instrumento.Eliminar(Id_Instrumento);
                 if (!result.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message, response = result.Success });

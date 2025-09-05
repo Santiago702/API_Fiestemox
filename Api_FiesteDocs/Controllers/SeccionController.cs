@@ -28,11 +28,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Lista de secciones.</returns>
         [HttpGet]
         [Route("Listar")]
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
             try
             {
-                List<Seccion> secciones = _seccion.Listar();
+                List<Seccion> secciones = await _seccion.Listar();
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = secciones });
             }
             catch (Exception ex)
@@ -48,11 +48,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Lista de secciones correspondientes al grupo.</returns>
         [HttpPost]
         [Route("ListarIdGrupo/{Id_Grupo:int}")]
-        public IActionResult ListarIdGrupo(int Id_Grupo)
+        public async Task<IActionResult> ListarIdGrupo(int Id_Grupo)
         {
             try
             {
-                List<Seccion> secciones = _seccion.ListarIdGrupo(Id_Grupo);
+                List<Seccion> secciones = await _seccion.ListarIdGrupo(Id_Grupo);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = secciones });
             }
             catch (Exception ex)
@@ -68,11 +68,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Objeto Sección.</returns>
         [HttpPost]
         [Route("Obtener/{Id_Seccion:int}")]
-        public IActionResult Obtener(int Id_Seccion)
+        public async Task<IActionResult> Obtener(int Id_Seccion)
         {
             try
             {
-                Seccion seccion = _seccion.Obtener(Id_Seccion);
+                Seccion seccion = await _seccion.Obtener(Id_Seccion);
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = seccion });
             }
             catch (Exception ex)
@@ -88,11 +88,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Resultado de la operación.</returns>
         [HttpPut]
         [Route("Crear")]
-        public IActionResult Crear([FromBody] Seccion seccion)
+        public async Task<IActionResult> Crear([FromBody] Seccion seccion)
         {
             try
             {
-                var result = _seccion.Crear(seccion);
+                var result = await _seccion.Crear(seccion);
                 if (!result.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message });
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = result.Message, response = result.Success });
@@ -110,11 +110,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Resultado de la operación.</returns>
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Seccion seccion)
+        public async Task<IActionResult> Editar([FromBody] Seccion seccion)
         {
             try
             {
-                var result = _seccion.Editar(seccion);
+                var result = await _seccion.Editar(seccion);
                 if (!result.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message });
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = result.Message, response = result.Success });
@@ -132,11 +132,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Resultado de la operación.</returns>
         [HttpDelete]
         [Route("Eliminar/{Id_Seccion:int}")]
-        public IActionResult Eliminar(int Id_Seccion)
+        public async Task<IActionResult> Eliminar(int Id_Seccion)
         {
             try
             {
-                var result = _seccion.Eliminar(Id_Seccion);
+                var result = await _seccion.Eliminar(Id_Seccion);
                 if (!result.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = result.Message });
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = result.Message, response = result.Success });

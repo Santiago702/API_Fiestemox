@@ -16,7 +16,7 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(InfoEstudiante estudiante)
+        public async Task<Request> Crear(InfoEstudiante estudiante)
         {
             if (estudiante == null || estudiante.Usuario == null || estudiante.Estudiante == null)
                 return new Request { Success = false, Message = "Datos incompletos" };
@@ -27,7 +27,7 @@ namespace Api_FiesteDocs.Services
                 return new Request { Success = false, Message = "Correo inválido" };
 
             
-            bool existeUsuario = _context.Usuarios.Any(u => u.Correo.ToLower() == correo);
+            bool existeUsuario = await _context.Usuarios.AnyAsync(u => u.Correo.ToLower() == correo);
             if (existeUsuario)
                 return new Request { Success = false, Message = "Correo ya existente" };
 
@@ -47,8 +47,8 @@ namespace Api_FiesteDocs.Services
                     IdRol = estudiante.Usuario.IdRol
                 };
 
-                _context.Usuarios.Add(nuevoUsuario);
-                _context.SaveChanges(); 
+                await _context.Usuarios.AddAsync(nuevoUsuario);
+                await _context.SaveChangesAsync(); 
 
                 
                 var nuevoEstudiante = new Estudiante
@@ -59,8 +59,8 @@ namespace Api_FiesteDocs.Services
                     IdUsuario = nuevoUsuario.IdUsuario
                 };
 
-                _context.Estudiantes.Add(nuevoEstudiante);
-                _context.SaveChanges();
+                await _context.Estudiantes.AddAsync(nuevoEstudiante);
+                await _context.SaveChangesAsync();
 
                 transaction.Commit();
                 return new Request { Success = true, Message = "Creado Correctamente" };
@@ -81,9 +81,9 @@ namespace Api_FiesteDocs.Services
         }
 
 
-        public Request Editar(Estudiante estudiante)
+        public async Task<Request> Editar(Estudiante estudiante)
         {
-            var dataEst = _context.Estudiantes.FirstOrDefault(e => e.IdEstudiante == estudiante.IdEstudiante);
+            var dataEst = await _context.Estudiantes.FirstOrDefaultAsync(e => e.IdEstudiante == estudiante.IdEstudiante);
 
             if (dataEst == null)
                 return new Request { Success = false, Message = "No se encontró estudiante" };
@@ -104,18 +104,18 @@ namespace Api_FiesteDocs.Services
                 ? dataEst.IdUsuario
                 : estudiante.IdUsuario;
             
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return new Request { Success = true , Message = "Editado Correctamente"};
             
         }
 
-        public Request Eliminar(int Id_Estudiante)
+        public async Task<Request> Eliminar(int Id_Estudiante)
         {
             if (Id_Estudiante <= 0)
                 return new Request { Success = false, Message = "Id inválido" };
 
-            var estudiante = _context.Estudiantes.FirstOrDefault(e => e.IdEstudiante == Id_Estudiante);
+            var estudiante = await _context.Estudiantes.FirstOrDefaultAsync(e => e.IdEstudiante == Id_Estudiante);
 
             if (estudiante == null)
                 return new Request { Success = false, Message = "No se encontró un estudiante asociado" };
@@ -132,12 +132,12 @@ namespace Api_FiesteDocs.Services
                 
                 if (IdUsuario.HasValue && IdUsuario.Value > 0)
                 {
-                    var usuario = _context.Usuarios.FirstOrDefault(u => u.IdUsuario == IdUsuario.Value);
+                    var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.IdUsuario == IdUsuario.Value);
                     if (usuario != null)
                         _context.Usuarios.Remove(usuario);
                 }
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 transaccion.Commit();
 
                 return new Request { Success = true, Message = "Estudiante eliminado" + (IdUsuario.HasValue ? " junto con su Usuario" : "") };
@@ -155,9 +155,9 @@ namespace Api_FiesteDocs.Services
         }
 
 
-        public List<InfoEstudiante> Listar(int Id_Grupo)
+        public async Task<List<InfoEstudiante>> Listar(int Id_Grupo)
         {
-            var query = _context.Asignaciones
+            var query = await _context.Asignaciones
                 .AsNoTracking()
                 .Where(a => a.IdGrupo == Id_Grupo)
                 .Join(_context.Estudiantes,
@@ -171,31 +171,31 @@ namespace Api_FiesteDocs.Services
                       {
                           Estudiante = ae.Est,
                           Usuario = u
-                      });
+                      }).ToListAsync();
 
-            return query.ToList();
+            return query;
         }
 
 
 
-        public InfoEstudiante ObtenerId(int Id_Estudiante)
+        public async Task<InfoEstudiante> ObtenerId(int Id_Estudiante)
         {
-            return (from e in _context.Estudiantes
+            return await (from e in _context.Estudiantes
                     join u in _context.Usuarios on e.IdUsuario equals u.IdUsuario
                     where e.IdEstudiante == Id_Estudiante
                     select new InfoEstudiante
                     {
                         Estudiante = e,
                         Usuario = u
-                    }).FirstOrDefault();
+                    }).FirstOrDefaultAsync();
         }
 
-        public InfoEstudiante ObtenerIdUsuario(int Id_Usuario)
+        public async Task<InfoEstudiante> ObtenerIdUsuario(int Id_Usuario)
         {
             if (Id_Usuario <= 0)
                 return null;
 
-            var result = _context.Estudiantes
+            var result = await _context.Estudiantes
                 .AsNoTracking()
                 .Where(e => e.IdUsuario == Id_Usuario)
                 .Join(
@@ -207,7 +207,7 @@ namespace Api_FiesteDocs.Services
                         Estudiante = e,
                         Usuario = u
                     })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             return result;
         }

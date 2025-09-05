@@ -2,6 +2,7 @@
 using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
     
@@ -14,19 +15,19 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Instrumento instrumento)
+        public async Task<Request> Crear(Instrumento instrumento)
         {
-            _context.Instrumentos.Add(instrumento);
-            _context.SaveChanges();
+            await _context.Instrumentos.AddAsync(instrumento);
+            await _context.SaveChangesAsync();
             return new Request {Success = true, Message = "Instrumento creado exitosamente."};
         }
 
-        public Request Editar(Instrumento instrumento)
+        public async Task<Request> Editar(Instrumento instrumento)
         {
             if(instrumento == null || instrumento.IdInstrumento <= 0)
                 return new Request { Success = false, Message = "Instrumento no válido." };
 
-            Instrumento ExisteInstrumento = _context.Instrumentos.Find(instrumento.IdInstrumento);
+            Instrumento ExisteInstrumento = await _context.Instrumentos.FindAsync(instrumento.IdInstrumento);
 
             if (ExisteInstrumento == null)
                 return new Request { Success = false, Message = "Instrumento no encontrado." };
@@ -38,11 +39,11 @@ namespace Api_FiesteDocs.Services
             ExisteInstrumento.IdSeccion = (instrumento.IdSeccion <= 0) 
                 ? ExisteInstrumento.IdSeccion 
                 : instrumento.IdSeccion;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Instrumento editado exitosamente." };
         }
 
-        public Request Eliminar(int Id_Instrumento)
+        public async Task<Request> Eliminar(int Id_Instrumento)
         {
             if(Id_Instrumento <= 0)
                 return new Request { Success = false, Message = "ID de instrumento no válido." };
@@ -50,40 +51,40 @@ namespace Api_FiesteDocs.Services
             if (ExisteInstrumento == null)
                 return new Request { Success = false, Message = "Instrumento no encontrado." };
             _context.Instrumentos.Remove(ExisteInstrumento);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Instrumento eliminado exitosamente." };
         }
 
-        public List<Instrumento> Listar()
+        public async Task<List<Instrumento>> Listar()
         {
-            List<Instrumento> instrumentos = _context.Instrumentos.ToList();
+            List<Instrumento> instrumentos = await _context.Instrumentos.AsNoTracking().ToListAsync();
             return instrumentos;
         }
 
-        public List<Instrumento> ListarIdGrupo(int Id_Grupo)
+        public async Task<List<Instrumento>> ListarIdGrupo(int Id_Grupo)
         {
-            var instrumentos = _context.Seccions
+            var instrumentos = await _context.Seccions.AsNoTracking()
                 .Where(s => s.IdGrupo == Id_Grupo)               
                 .SelectMany(s => _context.Instrumentos           
                     .Where(i => i.IdSeccion == s.IdSeccion))
-                .ToList();
+                .ToListAsync();
 
             return instrumentos;
         }
 
 
-        public List<Instrumento> ListarIdSeccion(int Id_Seccion)
+        public async Task<List<Instrumento>> ListarIdSeccion(int Id_Seccion)
         {
-            List<Instrumento> instrumentos = _context.Instrumentos
+            List<Instrumento> instrumentos = await _context.Instrumentos.AsNoTracking()
                 .Where(i => i.IdSeccion == Id_Seccion)
-                .ToList();
+                .ToListAsync();
             return instrumentos;
         }
 
-        public Instrumento Obtener(int Id_Instrumento)
+        public async Task<Instrumento> Obtener(int Id_Instrumento)
         {
-            Instrumento instrumento = _context.Instrumentos
-                .FirstOrDefault(i => i.IdInstrumento == Id_Instrumento);
+            Instrumento instrumento = await _context.Instrumentos.AsNoTracking()
+                .FirstOrDefaultAsync(i => i.IdInstrumento == Id_Instrumento);
             return instrumento;
         }
     }

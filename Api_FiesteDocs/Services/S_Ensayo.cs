@@ -2,6 +2,7 @@
 using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
 {
@@ -13,20 +14,20 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Ensayo ensayo)
+        public async Task<Request> Crear(Ensayo ensayo)
         {
             if (ensayo == null)
             {
                 return new Request { Message = "El ensayo no puede ser nulo", Success = false };
             }
-            _context.Ensayos.Add(ensayo);
-            _context.SaveChanges();
+            await _context.Ensayos.AddAsync(ensayo);
+            await _context.SaveChangesAsync();
             return new Request { Message = "Ensayo creado exitosamente", Success = true };
         }
 
-        public Request Editar(Ensayo ensayo)
+        public async Task<Request> Editar(Ensayo ensayo)
         {
-            var ensayoExistente = _context.Ensayos.Find(ensayo.IdEnsayo);
+            var ensayoExistente = await _context.Ensayos.FindAsync(ensayo.IdEnsayo);
             if (ensayoExistente == null)
                 return new Request { Message = "El ensayo no existe", Success = false };
 
@@ -42,42 +43,44 @@ namespace Api_FiesteDocs.Services
             if (ensayo.IdGrupo > 0)
                 ensayoExistente.IdGrupo = ensayo.IdGrupo;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return new Request { Message = "Ensayo editado exitosamente", Success = true };
         }
 
 
-        public Request Eliminar(int Id_Ensayo)
+        public async Task<Request> Eliminar(int Id_Ensayo)
         {
             if (Id_Ensayo <= 0)
                 return new Request { Message = "El Id del ensayo no es válido", Success = false };
 
-            Ensayo seleccionado = _context.Ensayos.Find(Id_Ensayo);
+            Ensayo seleccionado = await _context.Ensayos.FindAsync(Id_Ensayo);
             
             if (seleccionado == null)
                 return new Request { Message = "El ensayo no existe", Success = false };
 
             _context.Ensayos.Remove(seleccionado);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return new Request { Message = "Ensayo eliminado exitosamente", Success = true };
         }
 
-        public List<Ensayo> Listar(int Id_Grupo)
+        public async Task<List<Ensayo>> Listar(int Id_Grupo)
         {
             List<Ensayo> lista = new List<Ensayo>();
-            lista = _context.Ensayos.Where(e => e.IdGrupo == Id_Grupo).ToList();
+            lista = await _context.Ensayos.AsNoTracking().Where(e => e.IdGrupo == Id_Grupo).ToListAsync();
             return lista;
         }
 
 
 
-        public Ensayo ObtenerId(int Id_Ensayo)
+        public async Task<Ensayo> ObtenerId(int Id_Ensayo)
         {
-            Ensayo ensayo = new Ensayo();
-            ensayo = _context.Ensayos.Find(Id_Ensayo);
-            return ensayo;
+            if (Id_Ensayo <= 0) return null;
+
+            return await _context.Ensayos
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.IdEnsayo == Id_Ensayo);
         }
     }
 }

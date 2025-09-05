@@ -1,7 +1,9 @@
 ﻿using Api_FiesteDocs.Data;
 using Api_FiesteDocs.Entities;
+using Api_FiesteDocs.Functions;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
 {
@@ -13,27 +15,27 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public List<Partitura> Buscar(string Nombre)
+        public async Task<List<Partitura>> Buscar(string Nombre)
         {
             List<Partitura> partituras = new List<Partitura>();
-            partituras = _context.Partituras
+            partituras = await _context.Partituras.AsNoTracking()
                 .Where(p => p.Nombre.Contains(Nombre.ToUpper()))
-                .ToList();
+                .ToListAsync();
             return partituras;
         }
 
-        public Request Crear(Partitura partitura)
+        public async Task<Request> Crear(Partitura partitura)
         {
-            partitura.Carpeta = partitura.Carpeta.Trim().ToUpper();
+            partitura.Carpeta = Archivos.NormalizarCarpeta(partitura.Carpeta);
             partitura.Nombre = partitura.Nombre.Trim().ToUpper();
-            _context.Partituras.Add(partitura);
-            _context.SaveChanges();
+            await _context.Partituras.AddAsync(partitura);
+            await _context.SaveChangesAsync();
             return new Request { Message = "Partitura creada correctamente", Success = true };
         }
 
-        public Request Editar(Partitura partitura)
+        public async Task<Request> Editar(Partitura partitura)
         {
-            Partitura partituraExistente = _context.Partituras.Find(partitura.IdPartitura);
+            Partitura partituraExistente = await _context.Partituras.FindAsync(partitura.IdPartitura);
             if (partituraExistente == null)
                 return new Request { Message = "La partitura no existe", Success = false };
 
@@ -66,11 +68,11 @@ namespace Api_FiesteDocs.Services
 
         }
 
-        public Request Eliminar(int Id_Partitura)
+        public async Task<Request> Eliminar(int Id_Partitura)
         {
             if (Id_Partitura <= 0)
                 return new Request { Message = "El Id de la partitura no es valido", Success = false };
-            Partitura partitura = _context.Partituras.Find(Id_Partitura);
+            Partitura partitura = await _context.Partituras.FindAsync(Id_Partitura);
             if (partitura == null)
                 return new Request { Message = "La partitura no existe", Success = false };
             _context.Partituras.Remove(partitura);
@@ -78,30 +80,30 @@ namespace Api_FiesteDocs.Services
             return new Request { Message = "Partitura eliminada correctamente", Success = true };
         }
 
-        public List<Partitura> Listar()
+        public async Task<List<Partitura>> Listar()
         {
             List<Partitura> partituras = new List<Partitura>();
-            partituras = _context.Partituras.ToList();
+            partituras = await _context.Partituras.AsNoTracking().ToListAsync();
             return partituras;
         }
 
-        public List<Partitura> ListarIdGrupo(int Id_Grupo)
+        public async Task<List<Partitura>> ListarIdGrupo(int Id_Grupo)
         {
             if (Id_Grupo <= 0)
                 return new List<Partitura>();
 
-            return _context.Partituras
+            return await _context.Partituras.AsNoTracking()
                 .Where(p => _context.Seccions
                     .Any(s => s.IdSeccion == p.IdSeccion && s.IdGrupo == Id_Grupo))
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<InfoPartitura> ListarInfo(int Id_Grupo)
+        public async Task<List<InfoPartitura>> ListarInfo(int Id_Grupo)
         {
             if (Id_Grupo <= 0)
                 return new List<InfoPartitura>();
 
-            return _context.Partituras
+            return await _context.Partituras.AsNoTracking()
                 .Where(p => _context.Seccions.Any(s => s.IdSeccion == p.IdSeccion && s.IdGrupo == Id_Grupo))
                 .Select(p => new InfoPartitura
                 {
@@ -110,23 +112,23 @@ namespace Api_FiesteDocs.Services
                     Nombre = p.Nombre,
                     Comentarios = p.Comentarios
                 })
-                .ToList();
+                .ToListAsync();
         }
 
 
-        public List<Partitura> ListarIdSeccion(int Id_Seccion)
+        public async Task<List<Partitura>> ListarIdSeccion(int Id_Seccion)
         {
             List<Partitura> partituras = new List<Partitura>();
-            partituras = _context.Partituras
+            partituras = await _context.Partituras.AsNoTracking()
                 .Where(p => p.IdSeccion == Id_Seccion)
-                .ToList();
+                .ToListAsync();
             return partituras;
         }
 
-        public Partitura Obtener(int Id_Partitura)
+        public async Task<Partitura> Obtener(int Id_Partitura)
         {
             Partitura partitura = new Partitura();
-            partitura = _context.Partituras.Find(Id_Partitura);
+            partitura = await _context.Partituras.FindAsync(Id_Partitura);
             return partitura;
         }
     }

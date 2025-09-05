@@ -2,6 +2,7 @@
 using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
 {
@@ -13,20 +14,20 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Trabajo trabajo)
+        public async Task<Request> Crear(Trabajo trabajo)
         {
             if (trabajo == null)
             {
                 return new Request { Message = "El trabajo no puede ser nulo", Success = false };
             }
-            _context.Trabajos.Add(trabajo);
-            _context.SaveChanges();
+            await _context.Trabajos.AddAsync(trabajo);
+            await _context.SaveChangesAsync();
             return new Request { Message = "Trabajo creado exitosamente", Success = true };
         }
 
-        public Request Editar(Trabajo trabajo)
+        public async Task<Request> Editar(Trabajo trabajo)
         {
-            var trabajoExistente = _context.Trabajos.Find(trabajo.IdTrabajo);
+            var trabajoExistente = await _context.Trabajos.FindAsync(trabajo.IdTrabajo);
             if (trabajoExistente == null)
                 return new Request { Message = "El trabajo no existe", Success = false };
             // Actualizar solo los campos que no son nulos o tienen valores predeterminados
@@ -58,33 +59,33 @@ namespace Api_FiesteDocs.Services
                 ? trabajoExistente.Comentarios
                 : trabajo.Comentarios;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Message = "Trabajo editado exitosamente", Success = true };
         }
 
-        public Request Eliminar(int Id_Trabajo)
+        public async Task<Request> Eliminar(int Id_Trabajo)
         {
             if (Id_Trabajo <= 0)
                 return new Request { Message = "El Id del trabajo no es válido", Success = false };
-            Trabajo seleccionado = _context.Trabajos.Find(Id_Trabajo);
+            Trabajo seleccionado = await _context.Trabajos.FindAsync(Id_Trabajo);
             if (seleccionado == null)
                 return new Request { Message = "El trabajo no existe", Success = false };
             _context.Trabajos.Remove(seleccionado);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Message = "Trabajo eliminado exitosamente", Success = true };
         }
 
-        public List<Trabajo> Listar()
+        public async Task<List<Trabajo>> Listar()
         {
             List<Trabajo> lista = new List<Trabajo>();
-            lista = _context.Trabajos.ToList();
+            lista = await _context.Trabajos.AsNoTracking().ToListAsync();
             return lista;
         }
 
-        public List<InfoTrabajo> ListarIdEnsayo(int Id_Ensayo)
+        public async Task<List<InfoTrabajo>> ListarIdEnsayo(int Id_Ensayo)
         {
-            return _context.Trabajos
-                .Where(trabajo => trabajo.IdEnsayo == Id_Ensayo) // se filtra en la BD
+            return await _context.Trabajos.AsNoTracking()
+                .Where(trabajo => trabajo.IdEnsayo == Id_Ensayo) 
                 .Select(trabajo => new InfoTrabajo
                 {
                     IdTrabajo = trabajo.IdTrabajo,
@@ -94,13 +95,13 @@ namespace Api_FiesteDocs.Services
                     IdEnsayo = trabajo.IdEnsayo,
                     IdSeccion = trabajo.IdSeccion
                 })
-                .ToList();
+                .ToListAsync();
         }
 
 
-        public List<InfoTrabajo> ListarInfo()
+        public async Task<List<InfoTrabajo>> ListarInfo()
         {
-            return _context.Trabajos
+            return await _context.Trabajos.AsNoTracking()
                 .Select(trabajo => new InfoTrabajo
                 {
                     IdTrabajo = trabajo.IdTrabajo,
@@ -110,14 +111,14 @@ namespace Api_FiesteDocs.Services
                     IdEnsayo = trabajo.IdEnsayo,
                     IdSeccion = trabajo.IdSeccion
                 })
-                .ToList();
+                .ToListAsync();
         }
 
 
-        public Trabajo ObtenerId(int Id_Trabajo)
+        public async Task<Trabajo> ObtenerId(int Id_Trabajo)
         {
             Trabajo trabajo = new Trabajo();
-            trabajo = _context.Trabajos.Find(Id_Trabajo);
+            trabajo = await _context.Trabajos.FindAsync(Id_Trabajo);
             return trabajo;
         }
     }

@@ -20,12 +20,12 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("Listar/{Id_Grupo:int}")]
-        public IActionResult Listar(int Id_Grupo)
+        public async Task<IActionResult> Listar(int Id_Grupo)
         {
             List<Ensayo> ensayos = new List<Ensayo>();
             try
             {
-                ensayos = _ensayo.Listar(Id_Grupo);
+                ensayos = await _ensayo.Listar(Id_Grupo);
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Lista de ensayos obtenida exitosamente", Response = ensayos });
             }
             catch (Exception ex)
@@ -36,12 +36,12 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("Obtener/{Id_Ensayo:int}")]
-        public IActionResult Obtener(int Id_Ensayo)
+        public async Task<IActionResult> Obtener(int Id_Ensayo)
         {
             Ensayo ensayo = new Ensayo();
             try
             {
-                ensayo = _ensayo.ObtenerId(Id_Ensayo);
+                ensayo = await _ensayo.ObtenerId(Id_Ensayo);
                 if (ensayo == null)
                     return StatusCode(StatusCodes.Status404NotFound, new { Message = "El ensayo no existe" });
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Ensayo obtenido exitosamente", Response = ensayo });
@@ -54,12 +54,12 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Crear")]
-        public IActionResult Crear([FromBody] Ensayo ensayo)
+        public async Task<IActionResult> Crear([FromBody] Ensayo ensayo)
         {
             Request resultado = new Request();
             try
             {
-                resultado = _ensayo.Crear(ensayo);
+                resultado = await _ensayo.Crear(ensayo);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
                 return StatusCode(StatusCodes.Status200OK, new { Message = resultado.Message });
@@ -72,12 +72,12 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Ensayo ensayo)
+        public async Task<IActionResult> Editar([FromBody] Ensayo ensayo)
         {
             Request resultado = new Request();
             try
             {
-                resultado = _ensayo.Editar(ensayo);
+                resultado = await _ensayo.Editar(ensayo);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
                 return StatusCode(StatusCodes.Status200OK, new { Message = resultado.Message });
@@ -90,12 +90,12 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{id:int}")]
-        public IActionResult Eliminar(int id)
+        public async Task<IActionResult> Eliminar(int id)
         {
             Request resultado = new Request();
             try
             {
-                resultado = _ensayo.Eliminar(id);
+                resultado = await _ensayo.Eliminar(id);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
                 return StatusCode(StatusCodes.Status200OK, new { Message = resultado.Message });

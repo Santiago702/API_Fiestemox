@@ -10,7 +10,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="Id_Director">Identificador único del usuario director.</param>
         /// <returns>Lista de objetos <see cref="Grupo"/> asociados al director.</returns>
-        public List<Grupo> ObtenerIdDirector(int Id_Director);
+        Task<List<Grupo>> ObtenerIdDirector(int Id_Director);
 
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// sin importar el director al que pertenezcan.
         /// </summary>
         /// <returns>Lista completa de <see cref="Grupo"/>.</returns>
-        public List<Grupo> Listar();
+        Task<List<Grupo>> Listar();
 
 
         /// <summary>
@@ -26,14 +26,14 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="id_grupo">Identificador único del grupo musical.</param>
         /// <returns>Un objeto <see cref="Grupo"/> con la información del grupo, o null si no existe.</returns>
-        public Grupo ObtenerIdGrupo(int Id_Grupo);
+        Task<Grupo> ObtenerIdGrupo(int Id_Grupo);
 
         /// <summary>
         /// Obtiene todos los grupos musicales que pertenecen a un estudiante en específico.
         /// </summary>
         /// <param name="Id_Estudiante">Identificador único del usuario estudiante.</param>
         /// <returns>Lista de objetos <see cref="Grupo"/> asociados al estudiante.</returns>
-        public List<Grupo> ObtenerIdEstudiante(int Id_Estudiante);
+        Task<List<Grupo>> ObtenerIdEstudiante(int Id_Estudiante);
 
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// Objeto <see cref="Request"/> que indica si la operación fue exitosa,
         /// y en caso contrario, devuelve el error correspondiente.
         /// </returns>
-        public Request Editar(Grupo grupo);
+        Task<Request> Editar(Grupo grupo);
 
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// Objeto <see cref="Request"/> que indica el resultado de la operación,
         /// incluyendo si se creó correctamente o si ocurrió un error.
         /// </returns>
-        public Request Crear(Grupo grupo);
+        Task<Request> Crear(Grupo grupo);
 
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// <returns>
         /// Objeto <see cref="Request"/> que indica el resultado de la eliminación.
         /// </returns>
-        public Request Eliminar(int Id_Grupo);
+        Task<Request> Eliminar(int Id_Grupo);
 
 
 

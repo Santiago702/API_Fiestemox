@@ -3,6 +3,7 @@ using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Functions;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
 
 namespace Api_FiesteDocs.Services
@@ -16,20 +17,20 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Grupo grupo)
+        public async Task<Request> Crear(Grupo grupo)
         {
             if (grupo == null)
                 return new Request { Success = false, Message = "El objeto está vacío" };
             Grupo grupoF = Clases.Formatear(grupo);
-            _context.Grupos.Add(grupoF);
-            _context.SaveChanges();
+            await _context.Grupos.AddAsync(grupoF);
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Creado Correctamente" };
 
         }
 
-        public Request Editar(Grupo grupo)
+        public async Task<Request> Editar(Grupo grupo)
         {
-            var GrupoExistente = _context.Grupos.FirstOrDefault(g => g.IdGrupo == grupo.IdGrupo);
+            var GrupoExistente = await _context.Grupos.FirstOrDefaultAsync(g => g.IdGrupo == grupo.IdGrupo);
             if (GrupoExistente == null)
                 return new Request { Success = false, Message = "Grupo no Encontrado" };
 
@@ -47,51 +48,51 @@ namespace Api_FiesteDocs.Services
                 ? GrupoExistente.Codigo
                 : grupo.Codigo.ToUpper();
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Editado Correctamente" };
         }
 
-        public Request Eliminar(int Id_Grupo)
+        public async Task<Request> Eliminar(int Id_Grupo)
         {
-            var aEliminar = _context.Grupos.FirstOrDefault(g => g.IdGrupo == Id_Grupo);
+            var aEliminar = await _context.Grupos.FirstOrDefaultAsync(g => g.IdGrupo == Id_Grupo);
             if (aEliminar == null)
                 return new Request { Success = false, Message = "No se encontró Grupo" };
-
+            
             _context.Grupos.Remove(aEliminar);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Eliminado Correctamente" };
         }
 
-        public List<Grupo> Listar()
+        public async Task<List<Grupo>> Listar()
         {
             List<Grupo> lista = new List<Grupo>();
-            lista = _context.Grupos.ToList();
+            lista = await _context.Grupos.AsNoTracking().ToListAsync();
             return lista;
         }
 
-        public Grupo ObtenerIdGrupo(int Id_Grupo)
+        public async Task<Grupo> ObtenerIdGrupo(int Id_Grupo)
         {
             Grupo grupo = new Grupo();
-            grupo = _context.Grupos.FirstOrDefault( g => g.IdGrupo == Id_Grupo );
+            grupo = await _context.Grupos.AsNoTracking().FirstOrDefaultAsync(g => g.IdGrupo == Id_Grupo);
             
             return grupo;
         }
 
-        public List<Grupo> ObtenerIdEstudiante(int Id_Estudiante)
+        public async Task<List<Grupo>> ObtenerIdEstudiante(int Id_Estudiante)
         {
-            return _context.Asignaciones
+            return await _context.Asignaciones
                 .Where(a => a.IdEstudiante == Id_Estudiante)
                 .Join(_context.Grupos,
                       a => a.IdGrupo,
                       g => g.IdGrupo,
                       (a, g) => g)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Grupo> ObtenerIdDirector(int Id_Director)
+        public async Task<List<Grupo>> ObtenerIdDirector(int Id_Director)
         {
             List<Grupo> lista = new List<Grupo>();
-            lista = _context.Grupos.Where(g => g.IdUsuarioDirector == Id_Director).ToList();
+            lista = await _context.Grupos.AsNoTracking().Where(g => g.IdUsuarioDirector == Id_Director).ToListAsync();
             return lista;
         }
     }

@@ -28,12 +28,12 @@ namespace Api_FiesteDocs.Controllers
         [HttpGet]
         
         [Route("Listar")]
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
             List<Usuario> lista = new List<Usuario>();
             try
             {
-                lista = _usuario.Listar();
+                lista = await _usuario.Listar();
                 return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = lista });
 
             }
@@ -53,12 +53,12 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el usuario encontrado en "response", o un mensaje indicando que no se encontró.</returns>
         [HttpPost]
         [Route("ObtenerCorreo")]
-        public IActionResult ObtenerCorreo([FromBody] string correo)
+        public async Task<IActionResult> ObtenerCorreo([FromBody] string correo)
         {
             Usuario usuario = new Usuario();
             try
             {
-                usuario = _usuario.ObtenerCorreo(correo);
+                usuario = await _usuario.ObtenerCorreo(correo);
                 if (usuario != null)
                 {
                     return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = usuario });
@@ -79,12 +79,12 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el usuario encontrado en "response", o un mensaje indicando que no se encontró.</returns>
         [HttpPost]
         [Route("ObtenerId/{id_Usuario:int}")]
-        public IActionResult ObtenerId(int id_Usuario)
+        public async Task<IActionResult> ObtenerId(int id_Usuario)
         {
             Usuario usuario = new Usuario();
             try
             {
-                usuario = _usuario.ObtenerId(id_Usuario);
+                usuario = await _usuario.ObtenerId(id_Usuario);
                 if (usuario != null)
                 {
                     return StatusCode(StatusCodes.Status200OK, new { mensaje = "Ok", response = usuario });
@@ -105,11 +105,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
         [Route("Crear")]
-        public IActionResult Crear([FromBody] Usuario usuario)
+        public async Task<IActionResult> Crear([FromBody] Usuario usuario)
         {
             try
             {
-                Request peticion = _usuario.Crear(usuario);
+                Request peticion = await _usuario.Crear(usuario);
                 if (!peticion.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });
@@ -130,11 +130,11 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Usuario usuario = null)
+        public async Task<IActionResult> Editar([FromBody] Usuario usuario = null)
         {
             try
             {
-                Request peticion = _usuario.Editar(usuario);
+                Request peticion = await _usuario.Editar(usuario);
                 if (!peticion.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });
@@ -155,12 +155,12 @@ namespace Api_FiesteDocs.Controllers
         /// <returns>Respuesta HTTP con el resultado de la operación en la propiedad "mensaje".</returns>
         [HttpDelete]
         [Route("Eliminar/{id_Usuario:int}")]
-        public IActionResult Eliminar(int id_Usuario)
+        public async Task<IActionResult> Eliminar(int id_Usuario)
         {
 
             try
             {
-                Request peticion = _usuario.Eliminar(id_Usuario);
+                Request peticion = await _usuario.Eliminar(id_Usuario);
                 if (!peticion.Success)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new { mensaje = peticion.Message });

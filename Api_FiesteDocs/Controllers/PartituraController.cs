@@ -20,11 +20,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpGet]
         [Route("Listar")]
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
             try
             {
-                var partituras = _partitura.Listar();
+                var partituras = await _partitura.Listar();
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Lista de partituras obtenida exitosamente", Response = partituras });
             }
             catch (Exception ex)
@@ -35,11 +35,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("ListarIdSeccion/{Id_Seccion:int}")]
-        public IActionResult ListarIdSeccion(int Id_Seccion)
+        public async Task<IActionResult> ListarIdSeccion(int Id_Seccion)
         {
             try
             {
-                var partituras = _partitura.ListarIdSeccion(Id_Seccion);
+                var partituras = await _partitura.ListarIdSeccion(Id_Seccion);
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Lista de partituras por sección obtenida exitosamente", Response = partituras });
             }
             catch (Exception ex)
@@ -50,11 +50,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("ListarIdGrupo/{Id_Grupo:int}")]
-        public IActionResult ListarIdGrupo(int Id_Grupo)
+        public async Task<IActionResult> ListarIdGrupo(int Id_Grupo)
         {
             try
             {
-                var partituras = _partitura.ListarIdGrupo(Id_Grupo);
+                var partituras = await _partitura.ListarIdGrupo(Id_Grupo);
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Lista de partituras por grupo obtenida exitosamente", Response = partituras });
             }
             catch (Exception ex)
@@ -65,11 +65,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("ListarInfo/{Id_Grupo:int}")]
-        public IActionResult ListarInfo(int Id_Grupo)
+        public async Task<IActionResult> ListarInfo(int Id_Grupo)
         {
             try
             {
-                var partituras = _partitura.ListarInfo(Id_Grupo);
+                var partituras = await _partitura.ListarInfo(Id_Grupo);
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Lista de info de partituras obtenida exitosamente", Response = partituras });
             }
             catch (Exception ex)
@@ -80,11 +80,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("Obtener/{Id_Partitura:int}")]
-        public IActionResult Obtener(int Id_Partitura)
+        public async Task<IActionResult> Obtener(int Id_Partitura)
         {
             try
             {
-                var partitura = _partitura.Obtener(Id_Partitura);
+                var partitura = await _partitura.Obtener(Id_Partitura);
                 if (partitura == null)
                     return StatusCode(StatusCodes.Status404NotFound, new { Message = "La partitura no existe" });
 
@@ -98,11 +98,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPost]
         [Route("Buscar")]
-        public IActionResult Buscar([FromBody]string nombre)
+        public async Task<IActionResult> Buscar([FromBody]string nombre)
         {
             try
             {
-                var partituras = _partitura.Buscar(nombre);
+                var partituras = await _partitura.Buscar(nombre);
                 return StatusCode(StatusCodes.Status200OK, new { Message = "Búsqueda realizada exitosamente", Response = partituras });
             }
             catch (Exception ex)
@@ -113,11 +113,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Crear")]
-        public IActionResult Crear([FromBody] Partitura partitura)
+        public async Task<IActionResult> Crear([FromBody] Partitura partitura)
         {
             try
             {
-                var resultado = _partitura.Crear(partitura);
+                var resultado = await _partitura.Crear(partitura);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
 
@@ -131,11 +131,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpPut]
         [Route("Editar")]
-        public IActionResult Editar([FromBody] Partitura partitura)
+        public async Task<IActionResult> Editar([FromBody] Partitura partitura)
         {
             try
             {
-                var resultado = _partitura.Editar(partitura);
+                var resultado = await _partitura.Editar(partitura);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
 
@@ -149,11 +149,11 @@ namespace Api_FiesteDocs.Controllers
 
         [HttpDelete]
         [Route("Eliminar/{id:int}")]
-        public IActionResult Eliminar(int id)
+        public async Task<IActionResult> Eliminar(int id)
         {
             try
             {
-                var resultado = _partitura.Eliminar(id);
+                var resultado = await _partitura.Eliminar(id);
                 if (!resultado.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = resultado.Message });
 

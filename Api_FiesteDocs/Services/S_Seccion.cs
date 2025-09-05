@@ -3,6 +3,7 @@ using Api_FiesteDocs.Entities;
 using Api_FiesteDocs.Functions;
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api_FiesteDocs.Services
 {
@@ -14,21 +15,21 @@ namespace Api_FiesteDocs.Services
             _context = context;
         }
 
-        public Request Crear(Seccion seccion)
+        public async Task<Request> Crear(Seccion seccion)
         {
             if (seccion == null)
             {
                 return new Request { Success = false, Message = "Seccion vacía" };
             }
             
-            _context.Seccions.Add(Clases.Formatear(seccion));
-            _context.SaveChanges();
+            await _context.Seccions.AddAsync(Clases.Formatear(seccion));
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Sección creada exitosamente."};
         }
 
-        public Request Editar(Seccion seccion)
+        public async Task<Request> Editar(Seccion seccion)
         {
-            var seccionExistente = _context.Seccions.Find(seccion.IdSeccion);
+            var seccionExistente = await _context.Seccions.FindAsync(seccion.IdSeccion);
             if (seccionExistente == null)
                 return new Request { Success = false, Message = "Sección no encontrada." };
 
@@ -44,7 +45,7 @@ namespace Api_FiesteDocs.Services
             return new Request { Success = true, Message = "Editado Exitosamente" };
         }
 
-        public Request Eliminar(int Id_Seccion)
+        public async Task<Request> Eliminar(int Id_Seccion)
         {
             if (Id_Seccion <= 0)
                 return new Request { Success = false, Message = "ID de sección inválido." };
@@ -52,27 +53,27 @@ namespace Api_FiesteDocs.Services
             if (seccion == null)
                 return new Request { Success = false, Message = "Sección no encontrada." };
             _context.Seccions.Remove(seccion);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new Request { Success = true, Message = "Sección eliminada exitosamente." };
         }
 
-        public List<Seccion> Listar()
+        public async Task<List<Seccion>> Listar()
         {
-            List<Seccion> secciones = _context.Seccions.ToList();
+            List<Seccion> secciones = await _context.Seccions.AsNoTracking().ToListAsync();
             return secciones;
         }
 
-        public List<Seccion> ListarIdGrupo(int Id_Grupo)
+        public async Task<List<Seccion>> ListarIdGrupo(int Id_Grupo)
         {
-            List<Seccion> secciones = _context.Seccions.Where(s => s.IdGrupo == Id_Grupo).ToList();
+            List<Seccion> secciones = await _context.Seccions.AsNoTracking().Where(s => s.IdGrupo == Id_Grupo).ToListAsync();
             return secciones;
         }
 
-        public Seccion Obtener(int Id_Seccion)
+        public async Task<Seccion> Obtener(int Id_Seccion)
         {
             if (Id_Seccion <= 0)
                 return null;
-            Seccion seccion = _context.Seccions.Find(Id_Seccion);
+            Seccion seccion = await _context.Seccions.FindAsync(Id_Seccion);
             return seccion;
 
         }
