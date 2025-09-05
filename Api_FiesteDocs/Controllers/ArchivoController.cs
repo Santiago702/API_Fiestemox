@@ -2,12 +2,14 @@
 using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
 using Dropbox.Api.Files;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api_FiesteDocs.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class ArchivoController : ControllerBase
     {

@@ -132,5 +132,43 @@ namespace Api_FiesteDocs.Services
             return resultados;
         }
 
+        public async Task<Request> Existe(string rutaCarpeta)
+        {
+            var dbx = await GetClientAsync();
+            rutaCarpeta = Archivos.NormalizarCarpeta(rutaCarpeta);
+
+            try
+            {
+                var metadata = await dbx.Files.GetMetadataAsync(rutaCarpeta);
+
+                if (metadata.IsFolder)
+                {
+                    return new Request
+                    {
+                        Success = true,
+                        Message = "La carpeta existe."
+                    };
+                }
+                else
+                {
+                    return new Request
+                    {
+                        Success = false,
+                        Message = "Existe un objeto con ese nombre, pero no es una carpeta."
+                    };
+                }
+            }
+            catch (ApiException<GetMetadataError> ex)
+            {
+                
+                return new Request
+                {
+                    Success = false,
+                    Message = $"La carpeta no existe: {ex.Message}."
+                };
+            }
+        }
+
+
     }
 }

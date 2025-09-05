@@ -37,28 +37,28 @@ namespace Api_FiesteDocs.Services
             if (partituraExistente == null)
                 return new Request { Message = "La partitura no existe", Success = false };
 
-            partituraExistente.IdSeccion = partitura.IdSeccion <= 0 
-                ? partituraExistente.IdSeccion 
+            partituraExistente.IdSeccion = partitura.IdSeccion <= 0
+                ? partituraExistente.IdSeccion
                 : partitura.IdSeccion;
 
             partituraExistente.Archivo = string.IsNullOrEmpty(partitura.Archivo)
-                ? partituraExistente.Archivo 
+                ? partituraExistente.Archivo
                 : partitura.Archivo;
 
             partituraExistente.Comentarios = string.IsNullOrEmpty(partitura.Comentarios)
-                ? partituraExistente.Comentarios 
+                ? partituraExistente.Comentarios
                 : partitura.Comentarios;
 
             partituraExistente.Nombre = string.IsNullOrEmpty(partitura.Nombre)
-                ? partituraExistente.Nombre 
+                ? partituraExistente.Nombre
                 : partitura.Nombre.ToUpper();
 
             partituraExistente.Carpeta = string.IsNullOrEmpty(partitura.Carpeta)
-                ? partituraExistente.Carpeta 
+                ? partituraExistente.Carpeta
                 : partitura.Carpeta.Trim().ToUpper();
 
             partituraExistente.Tipo = string.IsNullOrEmpty(partitura.Tipo)
-                ? partituraExistente.Tipo 
+                ? partituraExistente.Tipo
                 : partitura.Tipo.Trim().ToLower();
 
             _context.SaveChanges();

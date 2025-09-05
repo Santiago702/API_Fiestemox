@@ -34,5 +34,11 @@ namespace Api_FiesteDocs.Services.Interfaces
         /// </summary>
         /// <param name="nombreCarpeta">Nombre de la carpeta a eliminar.</param>
         Task<Request>Eliminar(string nombreCarpeta);
+
+        /// <summary>
+        /// Busca si existe una carpeta especifica en Dropbox.
+        /// </summary>
+        /// <param name="rutaCarpeta">Ruta/nombre de la carpeta a buscar.</param>
+        Task<Request>Existe(string rutaCarpeta);
     }
 }

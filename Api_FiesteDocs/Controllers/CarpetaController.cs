@@ -1,11 +1,13 @@
 ﻿using Api_FiesteDocs.Models;
 using Api_FiesteDocs.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api_FiesteDocs.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class CarpetaController : ControllerBase
     {
@@ -37,6 +39,23 @@ namespace Api_FiesteDocs.Controllers
             try
             {
                 var respuesta = await _carpeta.Crear(rutaCarpeta);
+                if (!respuesta.Success)
+                    return StatusCode(StatusCodes.Status500InternalServerError, new { Message = respuesta.Message });
+                return StatusCode(StatusCodes.Status200OK, new { Message = respuesta });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("Existe")]
+        public async Task<IActionResult> Existe([FromBody] string rutaCarpeta)
+        {
+            try
+            {
+                var respuesta = await _carpeta.Existe(rutaCarpeta);
                 if (!respuesta.Success)
                     return StatusCode(StatusCodes.Status500InternalServerError, new { Message = respuesta.Message });
                 return StatusCode(StatusCodes.Status200OK, new { Message = respuesta });

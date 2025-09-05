@@ -21,7 +21,7 @@ namespace Api_FiesteDocs.Functions
             if (string.IsNullOrWhiteSpace(NombreCarpeta))
                 return string.Empty;
 
-            var normalizada = NombreCarpeta.ToUpper().Trim().Trim('/');
+            var normalizada = NombreCarpeta.ToUpper().Trim();
 
             return "/" + normalizada;
         }
